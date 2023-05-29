@@ -43,14 +43,15 @@ public class GameWindow extends JFrame implements WorldUpdateHandler {
         int startY = 31;
         System.out.println("bounds are " + startX + " " + startY + " "
                 + g.getClipBounds().getWidth() + " " + g.getClipBounds().getHeight());
-        int tileWidth = (getWidth() - 16) / 10;
-        int tileHeight = (getHeight() - 39) / 10;
+        int tileWidth = (getWidth() - 16) / 10; // The size of the border is 8px, so we subtract 16 (8 x 2)
+        int tileHeight = (getHeight() - 39) / 10; // The size of the header is 31px + 8px for 1 bottom border
         for (int y = 0; y < 10; y++) {
             for (int x = 0; x < 10; x++) {
+                // Draw the tile (red or black square), color[0] is black, color[1] is red
                 g2d.setColor(colors[world.tiles[y][x]]);
                 g2d.fillRect(x * tileWidth + startX, y * tileHeight + startY, tileWidth, tileHeight);
                 if (world.player.loc_x == x && world.player.loc_y == y) {
-                    // draw the player
+                    // draw the player (just a circle)
                     Ellipse2D.Double circle = new Ellipse2D.Double(
                             x * tileWidth + startX, y * tileHeight + startY, tileWidth, tileHeight);
                     g2d.setColor(new Color(255, 255, 255));
