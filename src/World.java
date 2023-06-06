@@ -10,6 +10,7 @@ public class World {
     Random random = new Random();
 
     World() {
+        // This is the map generation!
         for(int i = 0; i < 256; i++) {
             for (int j = 0; j < 256; j++) {
                 int blockId = random.nextInt(10);
