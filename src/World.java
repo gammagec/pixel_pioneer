@@ -1,20 +1,30 @@
+import java.util.*;
+
 public class World {
 
     final Player player = new Player();
     private WorldUpdateHandler worldUpdateHandler = null;
 
-    final int[][] tiles = {
-            {1, 0, 1, 0, 1, 0, 1, 0, 1, 0}, // 0
-            {0, 1, 0, 1, 0, 1, 0, 1, 0, 1}, // 1
-            {1, 0, 1, 0, 1, 0, 1, 0, 1, 0}, // 2
-            {0, 1, 0, 1, 0, 1, 0, 1, 0, 1}, // 3
-            {1, 0, 1, 0, 1, 0, 1, 0, 1, 0}, // 4
-            {0, 1, 0, 1, 0, 1, 0, 1, 0, 1}, // 5
-            {1, 0, 1, 0, 1, 0, 1, 0, 1, 0}, // 6
-            {0, 1, 0, 1, 0, 1, 0, 1, 0, 1}, // 7
-            {1, 0, 1, 0, 1, 0, 1, 0, 1, 0}, // 8
-            {0, 1, 0, 1, 0, 1, 0, 1, 0, 1}, // 9
-    };
+    final int[][] tiles = new int[256][256];
+    Map<Integer, Block> blocks = new HashMap<>();
+    Random random = new Random();
+
+    World() {
+        for(int i = 0; i < 256; i++) {
+            for (int j = 0; j < 256; j++) {
+                int blockId = random.nextInt(10);
+                tiles[i][j] = blockId;
+            }
+        }
+    }
+
+    boolean getBlocking(int x, int y) {
+        return blocks.get(tiles[y][x]).isBlocking();
+    }
+
+    void addBlock(int index, Block block) {
+        blocks.put(index, block);
+    }
 
     void setWorldUpdateHandler(WorldUpdateHandler worldUpdateHandler) {
         this.worldUpdateHandler = worldUpdateHandler;
