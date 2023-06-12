@@ -1,4 +1,7 @@
-package com.graphics_2d.world;
+package com.graphics_2d.world.biomes;
+
+import com.graphics_2d.world.GameObject;
+import com.graphics_2d.world.Tile;
 
 import java.awt.*;
 import java.util.*;

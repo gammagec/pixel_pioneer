@@ -49,7 +49,7 @@ public class Actions {
     }
 
     public void onReset() {
-        player.reset();
+        player.reset(world);
         hud.update();
         world.worldUpdated();
         soundEngine.playNextSong();

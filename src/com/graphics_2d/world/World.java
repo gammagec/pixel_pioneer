@@ -1,11 +1,12 @@
 package com.graphics_2d.world;
 
 import com.graphics_2d.Const;
+import com.graphics_2d.util.PointI;
+import com.graphics_2d.world.biomes.*;
 import com.graphics_2d.world.entities.Player;
 
 import java.io.IOException;
-import java.util.*;
-import java.util.List;
+import java.util.Random;
 
 import static java.lang.System.exit;
 
@@ -17,7 +18,11 @@ public class World {
     private final int[][] tiles = new int[Const.WORLD_SIZE][Const.WORLD_SIZE];
     private final int[][] objects = new int[Const.WORLD_SIZE][Const.WORLD_SIZE];
     private final int[][] tileBiomes = new int[Const.WORLD_SIZE][Const.WORLD_SIZE];
-    Random random = new Random();
+    private final Random random = new Random();
+
+    // private final BiomeGenerator biomeGenerator = new OriginalBiomeGenerator();
+    private final BiomeGenerator biomeGenerator = new PerlinBiomeGenerator();
+    private final BiomeGrower biomeGrower = new DefaultBiomeGrower();
 
     public World() {
         for (ImageAsset imageAsset : ImageAssets.ALL_ASSETS) {
@@ -31,6 +36,8 @@ public class World {
 
         generateBiomes();
         generateMap();
+
+        player.reset(this);
     }
 
     public Player getPlayer() {
@@ -38,26 +45,34 @@ public class World {
     }
 
     public void generateBiomes() {
-        int numBiomesXorY = Const.WORLD_SIZE / Const.BIOME_SIZE;
-        for(int i = 0; i < numBiomesXorY; i++) {
-            for (int j = 0; j < numBiomesXorY; j++) {
-                int biomeId = random.nextInt(Biomes.ALL_BIOMES.length);
-                for (int bx = 0; bx < Const.BIOME_SIZE; bx++) {
-                    for (int by = 0; by < Const.BIOME_SIZE; by++) {
-                        int x = i * Const.BIOME_SIZE + bx;
-                        int y = j * Const.BIOME_SIZE + by;
-                        tileBiomes[y][x] = biomeId;
-                    }
-                }
-            }
-        }
+        biomeGenerator.generateBiomes(tileBiomes, this);
 
-        for(int i = 0; i < 10; i++) {
+        for(int i = 0; i < Const.DEFAULT_GROW_BIOMES; i++) {
             growBiomes();
         }
+        /*
         for (int i = 0; i < random.nextInt(Const.MAX_RIVER_GENS); i++) {
             generateRiver();
+        }*/
+    }
+
+    public PointI randomSpawnPoint() {
+        while(true) {
+            int x = random.nextInt(Const.WORLD_SIZE);
+            int y = random.nextInt(Const.WORLD_SIZE);
+            Tile tile = getTileAt(x, y);
+            if (!tile.isSwim() && !tile.isBlocking() && tile.getDamage() == 0) {
+                return new PointI(x, y);
+            }
         }
+    }
+
+    public void growBiomes() {
+        biomeGrower.growBiomes(tileBiomes, new Integer[] {});
+    }
+
+    public void growBiomes(Integer[] biomes) {
+        biomeGrower.growBiomes(tileBiomes, biomes);
     }
 
     public void pickupObject(int x, int y) {
@@ -165,51 +180,6 @@ public class World {
             } else { // 12
                 facing--;
                 if (facing < 0) facing = 3;
-            }
-        }
-    }
-
-    public void growBiomes() {
-        System.out.println("Grow biomes");
-        for (int i = 0; i < Const.WORLD_SIZE; i++) {
-            for (int j = 0; j < Const.WORLD_SIZE; j++) {
-                int b = tileBiomes[i][j];
-                int weight = 0;
-                int validNeighbors = 0;
-                int[][] neighbors = new int[][] {
-                        {j - 1, i - 1},
-                        {j,     i - 1},
-                        {j + 1, i - 1},
-                        {j - 1, i    },
-                        {j + 1, i    },
-                        {j - 1, i + 1},
-                        {j,     i + 1},
-                        {j + 1, i + 1},
-                };
-                List<List<Integer>> openNeighbors = new ArrayList<>();
-                for (int[] neighbor : neighbors) {
-                    int x = neighbor[1];
-                    int y = neighbor[0];
-                    if (inBounds(x, y)) {
-                        validNeighbors++;
-                        if (tileBiomes[y][x] == b) {
-                            weight++;
-                        } else {
-                            openNeighbors.add(Arrays.asList(y, x));
-                        }
-                    }
-                }
-                int emptyNeighbors = openNeighbors.size();
-                int invalidNeighbors = 8 - validNeighbors;
-                if (emptyNeighbors == 0) {
-                    // all same neighbors
-                    continue;
-                }
-                int rand = random.nextInt(10 - invalidNeighbors);
-                if (rand < weight) {
-                    List<Integer> neighbor = openNeighbors.get(random.nextInt(openNeighbors.size()));
-                    tileBiomes[neighbor.get(0)][neighbor.get(1)] = b;
-                }
             }
         }
     }

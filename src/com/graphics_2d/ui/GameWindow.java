@@ -10,6 +10,7 @@ import static java.lang.System.exit;
 
 import com.graphics_2d.Const;
 import com.graphics_2d.actions.KeyboardHandler;
+import com.graphics_2d.world.biomes.Biome;
 import com.graphics_2d.world.entities.Player;
 import com.graphics_2d.world.*;
 

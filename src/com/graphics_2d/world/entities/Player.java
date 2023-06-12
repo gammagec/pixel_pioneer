@@ -1,8 +1,9 @@
 package com.graphics_2d.world.entities;
 
 import com.graphics_2d.Const;
+import com.graphics_2d.util.PointI;
 import com.graphics_2d.world.GameObject;
-import com.graphics_2d.world.entities.Entity;
+import com.graphics_2d.world.World;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,15 +23,15 @@ public class Player extends Entity {
     private final Map<Integer, Integer> objects = new HashMap<>();
 
     public Player() {
-        reset();
     }
 
-    public void reset() {
+    public void reset(World world) {
         health = Const.MAX_HEALTH;
         stamina = Const.MAX_STAMINA;
         thirst = Const.MAX_THIRST;
         hunger = Const.MAX_HUNGER;
-        setLocation(Const.WORLD_SIZE / 2, Const.WORLD_SIZE / 2);
+        PointI spawn = world.randomSpawnPoint();
+        setLocation(spawn.getX(), spawn.getY());
     }
 
     public Integer[] getObjects() {

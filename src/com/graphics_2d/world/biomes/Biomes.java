@@ -1,4 +1,7 @@
-package com.graphics_2d.world;
+package com.graphics_2d.world.biomes;
+
+import com.graphics_2d.world.GameObjects;
+import com.graphics_2d.world.Tiles;
 
 import java.awt.*;
 import java.util.HashMap;
