@@ -30,8 +30,7 @@ public class Player extends Entity {
         stamina = Const.MAX_STAMINA;
         thirst = Const.MAX_THIRST;
         hunger = Const.MAX_HUNGER;
-        PointI spawn = world.randomSpawnPoint();
-        setLocation(spawn.getX(), spawn.getY());
+        setLocation(world.randomSpawnPoint());
     }
 
     public Integer[] getObjects() {
@@ -40,6 +39,9 @@ public class Player extends Entity {
 
     public void takeDamage(int damage) {
         health = health - damage;
+        if (health < 0) {
+            health = 0;
+        }
     }
 
     public Integer getObjectCount(Integer objId) {

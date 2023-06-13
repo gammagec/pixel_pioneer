@@ -4,6 +4,8 @@ import com.graphics_2d.Const;
 import com.graphics_2d.sound.SoundEngine;
 import com.graphics_2d.ui.Hud;
 import com.graphics_2d.ui.Inventory;
+import com.graphics_2d.ui.MiniMap;
+import com.graphics_2d.util.PointI;
 import com.graphics_2d.world.GameObject;
 import com.graphics_2d.world.GameObjects;
 import com.graphics_2d.world.Tile;
@@ -17,13 +19,15 @@ public class Actions {
     private final Hud hud;
     private final Inventory inventory;
     private final SoundEngine soundEngine;
+    private final MiniMap miniMap;
 
-    public Actions(World world, Hud hud, Inventory inventory, SoundEngine soundEngine) {
+    public Actions(World world, Hud hud, Inventory inventory, SoundEngine soundEngine, MiniMap miniMap) {
         this.world = world;
         player = world.getPlayer();
         this.hud = hud;
         this.inventory = inventory;
         this.soundEngine = soundEngine;
+        this.miniMap = miniMap;
     }
 
     public void onEat() {
@@ -40,6 +44,7 @@ public class Actions {
     public void onGrowBiomes() {
         world.growBiomes();
         world.generateMap();
+        miniMap.update();
         world.worldUpdated();
     }
 
@@ -93,19 +98,20 @@ public class Actions {
     }
 
     private void move(int dx, int dy) {
-        int px = player.getX();
-        int py = player.getY();
-        if(canMoveHere(px + dx, py + dy) && player.isAlive()) {
-            player.setLocation(px + dx, py + dy);
+        PointI loc = player.getLocation();
+        int px = loc.getX();
+        int py = loc.getY();
+        PointI newLoc = loc.delta(dx, dy);
+        if(canMoveHere(newLoc) && player.isAlive()) {
+            player.setLocation(newLoc);
             afterMove();
         }
     }
 
     private void buildOrDrop(int dx, int dy) {
-        int px = player.getX();
-        int py = player.getY();
-        if (canMoveHere(px + dx, py + dy)) {
-            maybePutObject(px + dx, py + dy);
+        PointI newLoc = player.getLocation().delta(dx, dy);
+        if (canMoveHere(newLoc)) {
+            maybePutObject(newLoc.getX(), newLoc.getY());
         }
     }
 
@@ -135,9 +141,8 @@ public class Actions {
     void afterMove() {
         boolean needsHudUpdate = false;
         boolean needsInventoryUpdate = false;
-        int px = player.getX();
-        int py = player.getY();
-        Tile tile = world.getTileAt(px, py);
+        PointI loc = player.getLocation();
+        Tile tile = world.getTileAt(loc.getX(), loc.getY());
         int damage = 0;
         if (!player.isFlying()) {
             damage += tile.getDamage();
@@ -149,11 +154,11 @@ public class Actions {
             player.takeStamina(1);
             needsHudUpdate = true;
         }
-        GameObject obj = world.getObjectAt(px, py);
+        GameObject obj = world.getObjectAt(loc.getX(), loc.getY());
         if (obj != null && !player.isFlying()) {
             damage += obj.getDamage();
             if (obj.isCanPickup()) {
-                world.pickupObject(px, py);
+                world.pickupObject(loc.getX(), loc.getY());
                 needsInventoryUpdate = true;
                 needsHudUpdate = true;
             }
@@ -180,20 +185,20 @@ public class Actions {
         world.worldUpdated();
     }
 
-    boolean canMoveHere(int x, int y) {
-        if (x < 0) {
+    boolean canMoveHere(PointI loc) {
+        if (loc.getX() < 0) {
             return false;
         }
-        if (y < 0) {
+        if (loc.getY() < 0) {
             return false;
         }
-        if (x > Const.WORLD_SIZE) {
+        if (loc.getX() > Const.WORLD_SIZE) {
             return false;
         }
-        if (y > Const.WORLD_SIZE) {
+        if (loc.getY() > Const.WORLD_SIZE) {
             return false;
         }
-        return !this.world.getBlocking(x, y) || player.isFlying();
+        return !this.world.getBlocking(loc.getX(), loc.getY()) || player.isFlying();
     }
 
     public void inventory() {

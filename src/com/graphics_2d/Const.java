@@ -1,7 +1,9 @@
 package com.graphics_2d;
 
 public class Const {
-    public static int WORLD_SIZE = 256;
+    public static int WORLD_SIZE = 512;
+
+    public static int MINI_MAP_SIZE = 256;
     public static int BIOME_SIZE = 32;
 
     public static int MAX_HEALTH = 8;

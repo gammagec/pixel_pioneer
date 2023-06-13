@@ -1,19 +1,15 @@
 package com.graphics_2d.world.entities;
 
+import com.graphics_2d.util.PointI;
+
 public class Entity {
-    private int x = 0;
-    private int y = 0;
+    private PointI location;
 
-    public int getX() {
-        return x;
+    public PointI getLocation() {
+        return location;
     }
 
-    public int getY() {
-        return y;
-    }
-
-    public void setLocation(int x, int y) {
-        this.x = x;
-        this.y = y;
+    public void setLocation(PointI location) {
+        this.location = location;
     }
 }

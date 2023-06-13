@@ -9,6 +9,11 @@ public class PointI extends Point<Integer> {
         super(x, y);
     }
 
+    @Override
+    public PointI delta(Integer dx, Integer dy) {
+        return new PointI(getX() + dx, getY() + dy);
+    }
+
 
     PointI[] getNeighbors(int x, int y) {
         List<PointI> neighbors = new ArrayList<>() {{

@@ -10,7 +10,9 @@ import static java.lang.System.exit;
 
 import com.graphics_2d.Const;
 import com.graphics_2d.actions.KeyboardHandler;
+import com.graphics_2d.util.PointI;
 import com.graphics_2d.world.biomes.Biome;
+import com.graphics_2d.world.entities.Mob;
 import com.graphics_2d.world.entities.Player;
 import com.graphics_2d.world.*;
 
@@ -24,14 +26,18 @@ public class GameWindow extends JFrame implements WorldUpdateHandler {
     private BufferedImage backBuffer = null;
 
     final private Player player;
+    final private MiniMap miniMap;
 
-    public GameWindow(World world, Hud hud, Inventory inventory, KeyboardHandler keyboardHandler, SpriteSheet spriteSheet) {
+    public GameWindow(World world, Hud hud, Inventory inventory, KeyboardHandler keyboardHandler,
+                      SpriteSheet spriteSheet, MiniMap miniMap) {
         super("Game Window");
         this.inventory = inventory;
         this.spriteSheet = spriteSheet;
         this.world = world;
         this.hud = hud;
         this.player = world.getPlayer();
+        this.miniMap = miniMap;
+
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -47,6 +53,7 @@ public class GameWindow extends JFrame implements WorldUpdateHandler {
         }
         hud.update();
         inventory.update();
+        miniMap.update();
     }
 
     public void paint(Graphics g) {
@@ -58,18 +65,9 @@ public class GameWindow extends JFrame implements WorldUpdateHandler {
         repaint();
     }
 
-    public void drawMiniMap(Graphics2D g2d) {
-        BufferedImage mm = new BufferedImage(Const.WORLD_SIZE, Const.WORLD_SIZE, BufferedImage.TYPE_INT_ARGB);
-        for (int x = 0; x < Const.WORLD_SIZE; x++) {
-            for (int y = 0; y < Const.WORLD_SIZE; y++) {
-                Biome biome = world.getBiomeAt(x, y);
-                Color color = biome.getMapColor();
-                mm.setRGB(x, y, color.getRGB());
-            }
-        }
-        g2d.drawImage(mm, 0, 0, null);
-        g2d.setColor(Color.RED);
-        g2d.drawRect(player.getX(), player.getY(), 2, 2);
+    @Override
+    public void playerUpdated() {
+        hud.update();
     }
 
     public void drawBoard(Graphics g) {
@@ -86,8 +84,9 @@ public class GameWindow extends JFrame implements WorldUpdateHandler {
         int centerTileY = mapHeight / 2 - (tileHeight / 2);
         int numX = Math.ceilDiv(mapWidth, tileWidth);
         int numY = Math.ceilDiv(mapHeight, tileHeight);
-        int leftIndex = player.getX() - numX / 2;
-        int topIndex = player.getY() - numY / 2;
+        PointI loc = player.getLocation();
+        int leftIndex = loc.getX() - numX / 2;
+        int topIndex = loc.getY() - numY / 2;
         int startX = centerTileX - (numX / 2 * tileWidth);
         int startY = centerTileY - (numY / 2 * tileHeight);
 
@@ -110,7 +109,12 @@ public class GameWindow extends JFrame implements WorldUpdateHandler {
                     g2d.setColor(new Color(255, 255, 255));
                     g2d.fillRect(x * tileWidth + startX, y * tileHeight + startY, tileWidth, tileHeight);
                 }
-                if (tx == player.getX() && ty == player.getY()) {
+                Mob mob = world.getMobAt(tx, ty);
+                if (mob != null) {
+                    spriteSheet.drawTile(g2d, x * tileWidth + startX, y * tileHeight + startY,
+                            tileWidth, tileHeight, mob.getImageAsset().getIndex());
+                }
+                if (tx == loc.getX() && ty == loc.getY()) {
                     if (player.getHealth() > 0) {
                         spriteSheet.drawTile(g2d, x * tileWidth + startX, y * tileHeight + startY,
                                 tileWidth, tileHeight,
@@ -128,11 +132,11 @@ public class GameWindow extends JFrame implements WorldUpdateHandler {
                 }
             }
         }
-        drawMiniMap(g2d);
+        miniMap.draw(g2d, mapWidth, mapHeight);
         hud.draw(g2d, mapWidth, mapHeight);
         inventory.draw(g2d, mapWidth, mapHeight);
 
         Graphics2D g2d2 = (Graphics2D) g;
-        g2d2.drawImage(backBuffer, 0, 0, null);
+        g2d2.drawImage(backBuffer, 8, 32, null);
     }
 }

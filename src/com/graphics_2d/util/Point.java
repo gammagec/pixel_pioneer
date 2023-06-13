@@ -1,6 +1,6 @@
 package com.graphics_2d.util;
 
-public class Point<T> {
+abstract public class Point<T> {
     private final T x;
     private final T y;
 
@@ -8,6 +8,8 @@ public class Point<T> {
         this.x = x;
         this.y = y;
     }
+
+    public abstract Point<T> delta(T dx, T dy);
 
     public T getX() {
         return x;

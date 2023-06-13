@@ -3,10 +3,11 @@ package com.graphics_2d.world;
 import com.graphics_2d.Const;
 import com.graphics_2d.util.PointI;
 import com.graphics_2d.world.biomes.*;
+import com.graphics_2d.world.entities.Mob;
 import com.graphics_2d.world.entities.Player;
 
 import java.io.IOException;
-import java.util.Random;
+import java.util.*;
 
 import static java.lang.System.exit;
 
@@ -18,6 +19,8 @@ public class World {
     private final int[][] tiles = new int[Const.WORLD_SIZE][Const.WORLD_SIZE];
     private final int[][] objects = new int[Const.WORLD_SIZE][Const.WORLD_SIZE];
     private final int[][] tileBiomes = new int[Const.WORLD_SIZE][Const.WORLD_SIZE];
+
+    private final List<Mob> mobs = new ArrayList<>();
     private final Random random = new Random();
 
     // private final BiomeGenerator biomeGenerator = new OriginalBiomeGenerator();
@@ -40,6 +43,20 @@ public class World {
         player.reset(this);
     }
 
+    public void addMob(Mob mob) {
+        this.mobs.add(mob);
+    }
+
+    public Mob getMobAt(int x, int y) {
+        for (Mob mob : mobs) {
+            PointI p = mob.getLocation();
+            if (p.getX() == x && p.getY() == y) {
+                return mob;
+            }
+        }
+        return null;
+    }
+
     public Player getPlayer() {
         return player;
     }
@@ -57,14 +74,34 @@ public class World {
     }
 
     public PointI randomSpawnPoint() {
+        return randomSpawnPoint(
+                Arrays.stream(Biomes.ALL_BIOMES).map(Biome::getBiomeId).toArray(Integer[]::new), false);
+    }
+
+    public PointI randomSpawnPoint(Integer[] biomes, boolean includeSwim) {
+        Set<Integer> biomesSet = Set.of(biomes);
         while(true) {
             int x = random.nextInt(Const.WORLD_SIZE);
             int y = random.nextInt(Const.WORLD_SIZE);
             Tile tile = getTileAt(x, y);
-            if (!tile.isSwim() && !tile.isBlocking() && tile.getDamage() == 0) {
+            GameObject obj = getObjectAt(x, y);
+            boolean objBlocking = false;
+            if (obj != null) {
+                objBlocking = obj.isBlocking();
+            }
+            Integer biome = getBiomeAt(x, y).getBiomeId();
+            if ((includeSwim || !tile.isSwim()) &&
+                    !tile.isBlocking() &&
+                    tile.getDamage() == 0 &&
+                    !objBlocking &&
+                    biomesSet.contains(biome)) {
                 return new PointI(x, y);
             }
         }
+    }
+
+    public List<Mob> getMobs() {
+        return mobs;
     }
 
     public void growBiomes() {
@@ -193,11 +230,18 @@ public class World {
         if (objectIndex != -1 && GameObjects.OBJECTS_BY_ID.get(objectIndex).isBlocking()) {
             return true;
         }
+        System.out.println(Tiles.TILES_BY_ID.get(tiles[y][x]).isBlocking());
         return Tiles.TILES_BY_ID.get(tiles[y][x]).isBlocking();
     }
 
     public void setWorldUpdateHandler(WorldUpdateHandler worldUpdateHandler) {
         this.worldUpdateHandler = worldUpdateHandler;
+    }
+
+    public void playerUpdated() {
+        if (this.worldUpdateHandler != null) {
+            this.worldUpdateHandler.playerUpdated();
+        }
     }
 
     public void worldUpdated() {

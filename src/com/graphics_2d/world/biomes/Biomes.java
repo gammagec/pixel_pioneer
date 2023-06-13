@@ -41,15 +41,14 @@ public class Biomes {
         put(GameObjects.DIAMOND, 1);
     }}, new Color(0, 128, 0));
 
-    public static Biome VOLCANO = new Biome("volcano", new HashMap<>() {{
-        put(Tiles.LAVA, 3);
-        put(Tiles.STONE, 7);
+    public static Biome MOUNTAIN = new Biome("mountain", new HashMap<>() {{
+        put(Tiles.STONE, 1);
     }}, new HashMap<>() {{
         put(GameObjects.NO_OBJECT, 1969);
         put(GameObjects.IRON, 20);
         put(GameObjects.GOLD, 10);
         put(GameObjects.DIAMOND, 1);
-    }}, new Color(255, 128, 0));
+    }}, new Color(80, 80, 80));
 
     public static Biome DESERT = new Biome("desert", new HashMap<>() {{
         put(Tiles.SAND, 1);
@@ -66,18 +65,22 @@ public class Biomes {
     }}, new HashMap<>() {{
         put(GameObjects.NO_OBJECT, 1869);
         put(GameObjects.SPRUCE_TREE, 100);
-        put(GameObjects.IRON, 20);
-        put(GameObjects.GOLD, 10);
-        put(GameObjects.DIAMOND, 1);
     }}, new Color(255, 255, 255));
+
+    public static Biome ICE = new Biome("ice biome", new HashMap<>() {{
+        put(Tiles.ICE, 1);
+    }}, new HashMap<>() {{
+        put(GameObjects.NO_OBJECT, 1869);
+    }}, new Color(128, 255, 255));
 
     public static Biome[] ALL_BIOMES = new Biome[] {
         WATER,
         PLAINS,
         FOREST,
-        VOLCANO,
+        MOUNTAIN,
         DESERT,
-        SNOW
+        SNOW,
+        ICE
     };
 
     public static Map<Integer, Biome> BIOMES_BY_ID = new HashMap<>() {{
