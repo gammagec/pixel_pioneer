@@ -1,16 +1,18 @@
 package com.graphics_2d.actions;
 
 import com.graphics_2d.Const;
+import com.graphics_2d.ai.AiEngine;
 import com.graphics_2d.sound.SoundEngine;
+import com.graphics_2d.ui.CraftingMenu;
 import com.graphics_2d.ui.Hud;
 import com.graphics_2d.ui.Inventory;
 import com.graphics_2d.ui.MiniMap;
+import com.graphics_2d.util.Direction;
 import com.graphics_2d.util.PointI;
-import com.graphics_2d.world.GameObject;
-import com.graphics_2d.world.GameObjects;
-import com.graphics_2d.world.Tile;
-import com.graphics_2d.world.World;
+import com.graphics_2d.world.*;
 import com.graphics_2d.world.entities.Player;
+
+import java.util.Map;
 
 public class Actions {
 
@@ -19,20 +21,67 @@ public class Actions {
     private final Hud hud;
     private final Inventory inventory;
     private final SoundEngine soundEngine;
+    private final AiEngine aiEngine;
     private final MiniMap miniMap;
 
-    public Actions(World world, Hud hud, Inventory inventory, SoundEngine soundEngine, MiniMap miniMap) {
+    private final CraftingMenu craftingMenu;
+    private KeyboardHandler keyboardHandler;
+
+    public Actions(
+            World world,
+            Hud hud,
+            Inventory inventory,
+            SoundEngine soundEngine,
+            AiEngine aiEngine,
+            MiniMap miniMap,
+            CraftingMenu craftingMenu) {
         this.world = world;
         player = world.getPlayer();
         this.hud = hud;
         this.inventory = inventory;
         this.soundEngine = soundEngine;
+        this.aiEngine = aiEngine;
         this.miniMap = miniMap;
+        this.craftingMenu = craftingMenu;
     }
 
-    public void onEat() {
-        System.out.println("Eating");
-        player.setEating(true);
+    public void setKeyboardHandler(KeyboardHandler keyboardHandler) {
+        this.keyboardHandler = keyboardHandler;
+    }
+
+    public void craftSelected() {
+        player.craftRecipe(craftingMenu.getSelectedRecipe());
+        hud.update();
+        inventory.update();
+        craftingMenu.update();
+        world.worldUpdated();
+    }
+
+    public void endCraft() {
+        craftingMenu.setOpen(false);
+        aiEngine.setPaused(false);
+        keyboardHandler.setWorldMode();
+        world.worldUpdated();
+    }
+
+    public void craftSelectionDown() {
+        craftingMenu.selectionDown();
+        craftingMenu.update();
+        world.worldUpdated();
+    }
+
+    public void craftSelectionUp() {
+        craftingMenu.selectionUp();
+        craftingMenu.update();
+        world.worldUpdated();
+    }
+
+    public void onCraft() {
+        craftingMenu.setOpen(true);
+        keyboardHandler.setCraftingMode();
+        aiEngine.setPaused(true);
+        craftingMenu.update();
+        world.worldUpdated();
     }
 
     public void onGenerateBiomes() {
@@ -60,58 +109,91 @@ public class Actions {
         soundEngine.playNextSong();
     }
 
-    public void onHotBar(int index) {
-        if (player.isEating()) {
-            player.setEating(false);
-            Integer objId = player.getObjectIndexFromHotbarIndex(index);
-            System.out.println("hotbar obj " + objId + " at " + index);
-            if (objId != null) {
-                GameObject obj = GameObjects.OBJECTS_BY_ID.get(objId);
-                if (obj.isCanEat()) {
-                    player.eatObject(obj);
-                    player.removeObject(obj.getId());
-                    hud.update();
-                    world.worldUpdated();
+    public void use(Direction d) {
+        PointI loc = player.getLocation();
+        Integer id = player.getObjectIdFromHotbarIndex(player.getBuildingIndex() + 1);
+        if (id != null) {
+            GameObject obj = GameObjects.OBJECTS_BY_ID.get(id);
+            switch (d) {
+                case NORTH -> useLoc(loc.delta(0, -1), obj);
+                case SOUTH -> useLoc(loc.delta(0, 1), obj);
+                case EAST -> useLoc(loc.delta(1, 0), obj);
+                case WEST -> useLoc(loc.delta(-1, 0), obj);
+            }
+        }
+        // after use
+        keyboardHandler.setWorldMode();
+        hud.update();
+        inventory.update();
+        world.worldUpdated();
+    }
+
+    private void useLoc(PointI loc, GameObject obj) {
+        GameObject objUseOn = world.getObjectAt(loc.getX(), loc.getY());
+        if (objUseOn != null) {
+            System.out.println("Attempting to use " + obj.getName() + " on " + objUseOn.getName());
+            for (UseEffect effect : objUseOn.getUseEffects()) {
+                if (effect.isTriggerObject(obj.getId())) {
+                    world.removeObject(loc.getX(), loc.getY());
+                    for (Map.Entry<Integer, Integer> entry : effect.use().entrySet()) {
+                        for (int i = 0; i < entry.getValue(); i++) {
+                            if (entry.getKey() == GameObjects.SELF.getId()) {
+                                player.giveObject(GameObjects.OBJECTS_BY_ID.get(obj.getId()));
+                            } else {
+                                player.giveObject(GameObjects.OBJECTS_BY_ID.get(entry.getKey()));
+                            }
+                        }
+                    }
+                    return;
                 }
             }
-        } else {
-            player.setBuildingIndex(index);
+        } else if (obj.isCanBuild()){
+            world.putObject(loc.getX(), loc.getY(), obj.getId());
+            player.removeObject(obj.getId());
+        }
+    }
+
+    public void onHotBar(int index) {
+        Integer objId = player.getObjectIdFromHotbarIndex(index);
+        if (objId != null) {
+            GameObject obj = GameObjects.OBJECTS_BY_ID.get(objId);
+            if (obj.isCanEat()) {
+                player.eatObject(obj);
+                player.removeObject(obj.getId());
+                hud.update();
+                world.worldUpdated();
+            } else if (obj.isCanUse()) {
+                // Use mode
+                player.setBuildingIndex(index);
+                keyboardHandler.setUseMode();
+            }
             hud.update();
             world.worldUpdated();
         }
     }
 
     public void onUp() {
-        moveBuildOrDrop(0, -1);
+        move(0, -1);
     }
 
     public void onDown() {
-        moveBuildOrDrop(0, 1);
+        move(0, 1);
     }
 
     public void onLeft() {
-        moveBuildOrDrop(-1, 0);
+        move(-1, 0);
     }
 
     public void onRight() {
-        moveBuildOrDrop(1, 0);
+        move(1, 0);
     }
 
     private void move(int dx, int dy) {
         PointI loc = player.getLocation();
-        int px = loc.getX();
-        int py = loc.getY();
         PointI newLoc = loc.delta(dx, dy);
         if(canMoveHere(newLoc) && player.isAlive()) {
             player.setLocation(newLoc);
             afterMove();
-        }
-    }
-
-    private void buildOrDrop(int dx, int dy) {
-        PointI newLoc = player.getLocation().delta(dx, dy);
-        if (canMoveHere(newLoc)) {
-            maybePutObject(newLoc.getX(), newLoc.getY());
         }
     }
 
@@ -125,17 +207,8 @@ public class Actions {
             }
         }
         player.setBuildingIndex(0);
-        player.setEating(false);
         hud.update();
         world.worldUpdated();
-    }
-
-    private void moveBuildOrDrop(int dx, int dy) {
-        if (player.isBuilding()) {
-            buildOrDrop(dx, dy);
-        } else {
-            move(dx, dy);
-        }
     }
 
     void afterMove() {
@@ -181,7 +254,6 @@ public class Actions {
         if (needsInventoryUpdate) {
             inventory.update();
         }
-        player.setEating(false);
         world.worldUpdated();
     }
 
@@ -203,6 +275,12 @@ public class Actions {
 
     public void inventory() {
         inventory.toggleOpen();
+        world.worldUpdated();
+    }
+
+    public void endUse() {
+        keyboardHandler.setWorldMode();
+        hud.update();
         world.worldUpdated();
     }
 }

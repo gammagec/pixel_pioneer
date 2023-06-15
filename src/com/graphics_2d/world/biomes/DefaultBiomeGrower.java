@@ -12,7 +12,6 @@ public class DefaultBiomeGrower implements BiomeGrower {
     @Override
     public void growBiomes(int[][] biomes, Integer[] growOnly) {
         Set<Integer> growSet = Arrays.stream(growOnly).collect(Collectors.toSet());
-        System.out.println("Grow biomes");
         for (int i = 0; i < Const.WORLD_SIZE; i++) {
             for (int j = 0; j < Const.WORLD_SIZE; j++) {
                 int b = biomes[i][j];

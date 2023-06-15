@@ -1,8 +1,8 @@
 package com.graphics_2d.world.entities;
 
 import com.graphics_2d.Const;
-import com.graphics_2d.util.PointI;
 import com.graphics_2d.world.GameObject;
+import com.graphics_2d.world.Recipe;
 import com.graphics_2d.world.World;
 
 import java.util.HashMap;
@@ -46,18 +46,6 @@ public class Player extends Entity {
 
     public Integer getObjectCount(Integer objId) {
         return objects.get(objId);
-    }
-
-    public void setEating(boolean eating) {
-        this.eating = eating;
-    }
-
-    public boolean isEating() {
-        return eating;
-    }
-
-    public boolean isBuilding() {
-        return building > 0;
     }
 
     public boolean isAlive() {
@@ -133,7 +121,7 @@ public class Player extends Entity {
         }
     }
 
-    public Integer getObjectIndexFromHotbarIndex(int hotbarIndex) {
+    public Integer getObjectIdFromHotbarIndex(int hotbarIndex) {
         if (hotbarIndex <= objects.keySet().size() && hotbarIndex > 0) {
             return (Integer) objects.keySet().toArray()[hotbarIndex - 1];
         } else {
@@ -155,6 +143,30 @@ public class Player extends Entity {
         stamina += i;
         if (stamina > Const.MAX_STAMINA) {
             stamina = Const.MAX_STAMINA;
+        }
+    }
+
+    public void craftRecipe(Recipe selectedRecipe) {
+        for (Map.Entry<Integer, Integer> e : selectedRecipe.getRequiredObjects().entrySet()) {
+            Integer count = objects.get(e.getKey());
+            if (count != null && count < e.getValue()) {
+                return;
+            }
+        }
+        for (Map.Entry<Integer, Integer> e : selectedRecipe.getRequiredObjects().entrySet()) {
+            Integer count = objects.get(e.getKey());
+            if (count > e.getValue()) {
+                objects.put(e.getKey(), count - e.getValue());
+            } else {
+                objects.remove(e.getKey());
+            }
+        }
+        if (objects.containsKey(selectedRecipe.getOutputObjectId())) {
+            objects.put(
+                    selectedRecipe.getOutputObjectId(),
+                    objects.get(selectedRecipe.getOutputObjectId()) + selectedRecipe.getAmount());
+        } else {
+            objects.put(selectedRecipe.getOutputObjectId(), selectedRecipe.getAmount());
         }
     }
 }

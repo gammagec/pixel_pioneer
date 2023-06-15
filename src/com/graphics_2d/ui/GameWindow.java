@@ -28,9 +28,12 @@ public class GameWindow extends JFrame implements WorldUpdateHandler {
     final private Player player;
     final private MiniMap miniMap;
 
+    final private CraftingMenu craftingMenu;
+
     public GameWindow(World world, Hud hud, Inventory inventory, KeyboardHandler keyboardHandler,
-                      SpriteSheet spriteSheet, MiniMap miniMap) {
+                      SpriteSheet spriteSheet, MiniMap miniMap, CraftingMenu craftingMenu) {
         super("Game Window");
+        this.craftingMenu = craftingMenu;
         this.inventory = inventory;
         this.spriteSheet = spriteSheet;
         this.world = world;
@@ -54,6 +57,7 @@ public class GameWindow extends JFrame implements WorldUpdateHandler {
         hud.update();
         inventory.update();
         miniMap.update();
+        craftingMenu.update();
     }
 
     public void paint(Graphics g) {
@@ -124,7 +128,6 @@ public class GameWindow extends JFrame implements WorldUpdateHandler {
                                 tileWidth, tileHeight, ImageAssets.DEAD.getIndex()); // dead guy block
                     }
                     Tile tileAt = world.getTileAt(tx, ty);
-                    System.out.println("tileAt " + tileAt.getName() + " " + tileAt.isSwim());
                     if (tileAt.isSwim()) {
                         spriteSheet.drawTile(g2d, x * tileWidth + startX, y * tileHeight + startY,
                                 tileWidth, tileHeight, tileAt.getSwimAsset().getIndex()); //swim cover
@@ -135,6 +138,7 @@ public class GameWindow extends JFrame implements WorldUpdateHandler {
         miniMap.draw(g2d, mapWidth, mapHeight);
         hud.draw(g2d, mapWidth, mapHeight);
         inventory.draw(g2d, mapWidth, mapHeight);
+        craftingMenu.draw(g2d, mapWidth, mapHeight);
 
         Graphics2D g2d2 = (Graphics2D) g;
         g2d2.drawImage(backBuffer, 8, 32, null);

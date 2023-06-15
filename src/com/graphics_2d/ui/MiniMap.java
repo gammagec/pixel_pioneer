@@ -55,7 +55,6 @@ public class MiniMap {
 
         int left = (Const.WORLD_SIZE / 2) + loc.getX() - (width / 2);
         int top = (Const.WORLD_SIZE / 2) + loc.getY() - (height / 2);
-        System.out.println("sub image " + left + " " + top + " " + width + " " + height);
         Image img = image.getSubimage(left, top, width, height);
         BufferedImage dst = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = dst.createGraphics();

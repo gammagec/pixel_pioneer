@@ -13,6 +13,8 @@ public class AiEngine {
     private final World world;
     private final Random random = new Random();
 
+    private boolean paused = false;
+
     public AiEngine(World world) {
         this.world = world;
     }
@@ -27,9 +29,15 @@ public class AiEngine {
     }
 
     public void updateMobs() {
-        for (Mob mob : world.getMobs()) {
-            mob.update();
+        if (!paused) {
+            for (Mob mob : world.getMobs()) {
+                mob.update();
+            }
+            world.worldUpdated();
         }
-        world.worldUpdated();
+    }
+
+    public void setPaused(boolean paused) {
+        this.paused = paused;
     }
 }

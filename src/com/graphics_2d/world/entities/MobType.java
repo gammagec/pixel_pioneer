@@ -4,4 +4,6 @@ public enum MobType {
     SNAKE,
     LAVA_MONSTER,
     SEA_DRAGON,
+
+    COW,
 }

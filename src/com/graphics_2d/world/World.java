@@ -112,6 +112,10 @@ public class World {
         biomeGrower.growBiomes(tileBiomes, biomes);
     }
 
+    public void removeObject(int x, int y) {
+        objects[y][x] = -1;
+    }
+
     public void pickupObject(int x, int y) {
         player.giveObject(GameObjects.OBJECTS_BY_ID.get(objects[y][x]));
         objects[y][x] = -1;
@@ -230,7 +234,6 @@ public class World {
         if (objectIndex != -1 && GameObjects.OBJECTS_BY_ID.get(objectIndex).isBlocking()) {
             return true;
         }
-        System.out.println(Tiles.TILES_BY_ID.get(tiles[y][x]).isBlocking());
         return Tiles.TILES_BY_ID.get(tiles[y][x]).isBlocking();
     }
 

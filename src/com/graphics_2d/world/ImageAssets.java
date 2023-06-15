@@ -31,6 +31,15 @@ public class ImageAssets {
     public static ImageAsset BREAD = new ImageAsset("images/Bread.png");
     public static ImageAsset BEEF = new ImageAsset("images/Beef.png");
     public static ImageAsset GUY_FLY = new ImageAsset("images/guy_fly.png");
+    public static ImageAsset TWIG = new ImageAsset("images/Twig.png");
+    public static ImageAsset ROCK = new ImageAsset("images/rock.png");
+    public static ImageAsset AXE = new ImageAsset("images/axe.png");
+    public static ImageAsset CHECK = new ImageAsset("images/check.png");
+    public static ImageAsset X = new ImageAsset("images/x.png");
+    public static ImageAsset PICKAXE = new ImageAsset("images/Pickaxe.png");
+    public static ImageAsset BOULDER = new ImageAsset("images/boulder.png");
+    public static ImageAsset COW = new ImageAsset("images/cow.png");
+    public static ImageAsset BRICK = new ImageAsset("images/brick.png");
 
     public static ImageAsset[] ALL_ASSETS = {
             LAVA_MONSTER,
@@ -50,5 +59,10 @@ public class ImageAssets {
             SPRUCE_TREE,
             IRON, GOLD, DIAMOND,
             IN_WATER, IN_LAVA, GUY_FLY,
+            TWIG, ROCK,
+            AXE, CHECK, X, PICKAXE,
+            BOULDER,
+            COW,
+            BRICK
     };
 }

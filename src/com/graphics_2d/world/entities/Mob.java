@@ -24,7 +24,7 @@ public class Mob extends Entity {
 
     public static Integer[] getBiomesForMob(MobType type) {
         return switch (type) {
-            case SNAKE -> new Integer[] {
+            case SNAKE, COW -> new Integer[] {
                     Biomes.PLAINS.getBiomeId()
             };
             case LAVA_MONSTER -> new Integer[] {
@@ -39,7 +39,8 @@ public class Mob extends Entity {
     public static int getMobVisionRange(MobType type) {
         return switch (type) {
             case SNAKE -> 4;
-            case LAVA_MONSTER, SEA_DRAGON -> 5;
+            case LAVA_MONSTER, SEA_DRAGON -> 7;
+            case COW -> 0;
         };
     }
 
@@ -56,6 +57,7 @@ public class Mob extends Entity {
         return switch (type) {
             case SNAKE -> 1;
             case SEA_DRAGON, LAVA_MONSTER -> 2;
+            case COW -> 0;
         };
     }
 
@@ -68,6 +70,7 @@ public class Mob extends Entity {
             case SNAKE -> ImageAssets.SNAKE;
             case LAVA_MONSTER -> ImageAssets.LAVA_MONSTER;
             case SEA_DRAGON -> ImageAssets.SEA_DRAGON;
+            case COW -> ImageAssets.COW;
         };
     }
 
@@ -124,8 +127,9 @@ public class Mob extends Entity {
         }
         if (canMove(dst)) {
             setLocation(dst);
-            if (Objects.equals(dst.getX(), pLoc.getX()) && Objects.equals(dst.getY(), pLoc.getY())) {
-                world.getPlayer().takeDamage(getDamage());
+            Player player = world.getPlayer();
+            if (Objects.equals(dst.getX(), pLoc.getX()) && Objects.equals(dst.getY(), pLoc.getY()) && !player.isFlying()) {
+                player.takeDamage(getDamage());
                 world.playerUpdated();
                 world.worldUpdated();
             }

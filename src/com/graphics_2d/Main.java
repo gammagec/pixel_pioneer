@@ -20,10 +20,13 @@ public class Main {
         Hud hud = new Hud(world.getPlayer(), spriteSheet);
         Inventory inventory = new Inventory(world.getPlayer(), spriteSheet);
         MiniMap miniMap = new MiniMap(world);
-        Actions actions = new Actions(world, hud, inventory, soundEngine, miniMap);
+        CraftingMenu craftingMenu = new CraftingMenu(world, spriteSheet);
+        Actions actions = new Actions(world, hud, inventory, soundEngine, aiEngine, miniMap, craftingMenu);
         KeyboardHandler keyboardHandler = new KeyboardHandler(actions);
+        actions.setKeyboardHandler(keyboardHandler);
         soundEngine.playBackgroundMusic();
-        GameWindow gameWindow = new GameWindow(world, hud, inventory, keyboardHandler, spriteSheet, miniMap);
+        GameWindow gameWindow = new GameWindow(
+                world, hud, inventory, keyboardHandler, spriteSheet, miniMap, craftingMenu);
         aiEngine.populateMobs();
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
