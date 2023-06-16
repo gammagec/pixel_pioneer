@@ -12,6 +12,11 @@ import java.util.TimerTask;
 
 public class Main {
 
+    // Pixel Pioneer: Guy's Odyssey
+    // - By Tristan Gammage
+    // - And Christopher Gammage
+    // --- Started May 29, 2023
+
     public static void main(String[] args) {
         SoundEngine soundEngine = new SoundEngine();
         World world = new World();
