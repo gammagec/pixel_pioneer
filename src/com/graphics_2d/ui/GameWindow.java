@@ -95,6 +95,7 @@ public class GameWindow extends JFrame implements WorldUpdateHandler {
 
         for (int y = 0; y <= numY; y++) {
             for (int x = 0; x <= numX; x++) {
+                // Comment below is from the ORIGINAL version!
                 // Draw the tile (red or black square), color[0] is black, color[1] is red
                 int tx = leftIndex + x;
                 int ty = topIndex + y;
@@ -131,6 +132,7 @@ public class GameWindow extends JFrame implements WorldUpdateHandler {
                         Integer bObj = player.getBuildingObjectIndex();
                         if (bObj != null) {
                             GameObject gObj = GameObject.OBJECTS_BY_ID.get(bObj);
+                            System.out.println("Drawing object " + gObj.getName());
                             spriteSheet.drawTile(g2d, x * tileWidth + startX, y * tileHeight + startY,
                                     tileWidth / 2, tileHeight / 2, gObj.getImageAsset(0).getId());
                         }

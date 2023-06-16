@@ -60,7 +60,7 @@ public class Hud {
                 spriteSheet.drawTile(g2d, x + 5 + (66 * i), y + 5, 64, 64, objImageIndex);
                 g2d.drawString(String.valueOf(i + 1), x + 5 + (66 * i), y + 25);
                 g2d.drawString(String.valueOf(count), x + 5 + (66 * i), y + 65);
-                if (i == player.getBuildingIndex()) {
+                if (i == player.getBuildingIndex() - 1) {
                     g2d.setColor(Color.RED);
                     g2d.drawRect(x + (66 * i), y + 4, 65, 65);
                 }

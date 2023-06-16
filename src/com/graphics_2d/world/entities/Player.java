@@ -1,10 +1,7 @@
 package com.graphics_2d.world.entities;
 
 import com.graphics_2d.Const;
-import com.graphics_2d.world.GameObject;
-import com.graphics_2d.world.ObjectInstance;
-import com.graphics_2d.world.Recipe;
-import com.graphics_2d.world.World;
+import com.graphics_2d.world.*;
 
 import java.util.*;
 
@@ -23,6 +20,9 @@ public class Player extends Entity {
     private final ObjectInstance[][] inventory = new ObjectInstance[Const.INVENTORY_HEIGHT][Const.INVENTORY_WIDTH];
 
     public Player() {
+        inventory[0][0] = new ObjectInstance(GameObjects.BASIC_SWORD.getId(), 1);
+        inventory[0][1] = new ObjectInstance(GameObjects.BASIC_AXE.getId(), 1);
+        inventory[0][2] = new ObjectInstance(GameObjects.BASIC_PICK_AXE.getId(), 1);
     }
 
     public void reset(World world) {
@@ -58,7 +58,7 @@ public class Player extends Entity {
     }
 
     public int getBuildingIndex() {
-        return building - 1;
+        return building;
     }
 
     public void setBuildingIndex(int buildingIndex) {

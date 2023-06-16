@@ -95,6 +95,7 @@ public class GameObjects {
         setBlocking(true);
         setCanUse(true);
         setCanBuild(true);
+        setUses(1);
         addUseEffect(new UseEffect(new HashSet<>() {{
             add(GameObjects.BASIC_PICK_AXE.getId());
         }}, new HashMap<>() {{

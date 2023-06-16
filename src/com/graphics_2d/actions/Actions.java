@@ -112,7 +112,7 @@ public class Actions {
 
     public void use(Direction d) {
         PointI loc = player.getLocation();
-        Integer id = player.getObjectIdFromHotbarIndex(player.getBuildingIndex() + 1);
+        Integer id = player.getObjectIdFromHotbarIndex(player.getBuildingIndex());
         if (id != null) {
             GameObject obj = GameObject.OBJECTS_BY_ID.get(id);
             switch (d) {
@@ -180,8 +180,6 @@ public class Actions {
             if (obj.isCanEat()) {
                 player.eatObject(obj);
                 player.removeObject(obj.getId());
-                hud.update();
-                world.worldUpdated();
             } else if (obj.isCanUse()) {
                 // Use mode
                 player.setBuildingIndex(index);
