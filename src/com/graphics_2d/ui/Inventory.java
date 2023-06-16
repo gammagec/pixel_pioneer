@@ -1,8 +1,9 @@
 package com.graphics_2d.ui;
 
+import com.graphics_2d.Const;
+import com.graphics_2d.world.ObjectInstance;
 import com.graphics_2d.world.entities.Player;
 import com.graphics_2d.world.GameObject;
-import com.graphics_2d.world.GameObjects;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -10,7 +11,7 @@ import java.awt.image.BufferedImage;
 public class Inventory {
 
     static int HEIGHT = 800;
-    static int WIDTH = 100;
+    static int WIDTH = 800;
 
     private final BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
     private final Player player;
@@ -35,11 +36,15 @@ public class Inventory {
 
         int x = 7;
         int y = 5;
-        for (Integer objId : player.getObjects()) {
-            GameObject obj = GameObjects.OBJECTS_BY_ID.get(objId);
-            spriteSheet.drawTile(g2d, x, y, 64, 64, obj.getImageAsset().getIndex());
-            g2d.drawString(player.getObjectCount(objId).toString(), x + 7 + 64 + 2, y + 12);
-            y += 64 + 5;
+        for (int iy = 0; iy < Const.INVENTORY_HEIGHT; iy++) {
+            for (int ix = 0; ix < Const.INVENTORY_WIDTH; ix++) {
+                ObjectInstance obj = player.getInventoryAt(ix, iy);
+                if (obj != null) {
+                    GameObject gObj = GameObject.OBJECTS_BY_ID.get(obj.getObjectId());
+                    spriteSheet.drawTile(g2d, x + (ix * 69), y + (iy * 69), 64, 64, gObj.getImageAsset(0).getId());
+                    g2d.drawString(String.valueOf(obj.getCount()), x + 7 + 64 + 2, y + 12);
+                }
+            }
         }
     }
 

@@ -1,6 +1,7 @@
 package com.graphics_2d.world.biomes;
 
 import com.graphics_2d.Const;
+import com.graphics_2d.world.LocationInfo;
 import com.graphics_2d.world.World;
 
 import java.util.Random;
@@ -8,7 +9,7 @@ import java.util.Random;
 public class OriginalBiomeGenerator implements BiomeGenerator {
     private final Random random = new Random();
     @Override
-    public void generateBiomes(int[][] biomes, World world) {
+    public void generateBiomes(LocationInfo[][] locations, World world) {
         int numBiomesXorY = Const.WORLD_SIZE / Const.BIOME_SIZE;
         for(int i = 0; i < numBiomesXorY; i++) {
             for (int j = 0; j < numBiomesXorY; j++) {
@@ -17,7 +18,7 @@ public class OriginalBiomeGenerator implements BiomeGenerator {
                     for (int by = 0; by < Const.BIOME_SIZE; by++) {
                         int x = i * Const.BIOME_SIZE + bx;
                         int y = j * Const.BIOME_SIZE + by;
-                        biomes[y][x] = biomeId;
+                        locations[y][x].setBiomeId(biomeId);
                     }
                 }
             }

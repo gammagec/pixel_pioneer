@@ -1,7 +1,9 @@
 package com.graphics_2d.world;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class GameObject {
 
@@ -12,18 +14,27 @@ public class GameObject {
     private int damage = 0;
     private static int nextId = 0;
     private boolean canPickup = false;
-
     private boolean canEat = false;
     private boolean canUse = false;
     private boolean canBuild = false;
 
+    private int uses = 0;
+
+    public static final Map<Integer, GameObject> OBJECTS_BY_ID = new HashMap<>();
+
     private final List<UseEffect> useEffects = new ArrayList<>();
+    private Map<Integer, ImageAsset> assetsAtUse = new HashMap<>();
 
     public GameObject(String name, ImageAsset imageAsset) {
         this.imageAsset = imageAsset;
         this.isBlocking = false;
         this.name = name;
         this.id = nextId++;
+        OBJECTS_BY_ID.put(this.id, this);
+    }
+
+    public void setAssetAtUse(int use, ImageAsset asset) {
+        this.assetsAtUse.put(use, asset);
     }
 
     public void setCanBuild(boolean canBuild) {
@@ -66,7 +77,11 @@ public class GameObject {
         return damage;
     }
 
-    public ImageAsset getImageAsset() {
+    public ImageAsset getImageAsset(int use) {
+        ImageAsset assetAtUse = assetsAtUse.get(use);
+        if (assetAtUse != null) {
+            return assetAtUse;
+        }
         return imageAsset;
     }
 
@@ -92,5 +107,13 @@ public class GameObject {
 
     public List<UseEffect> getUseEffects() {
         return useEffects;
+    }
+
+    public int getUses() {
+        return uses;
+    }
+
+    public void setUses(int uses) {
+        this.uses = uses;
     }
 }

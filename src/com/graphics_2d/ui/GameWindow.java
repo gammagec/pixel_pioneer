@@ -11,7 +11,6 @@ import static java.lang.System.exit;
 import com.graphics_2d.Const;
 import com.graphics_2d.actions.KeyboardHandler;
 import com.graphics_2d.util.PointI;
-import com.graphics_2d.world.biomes.Biome;
 import com.graphics_2d.world.entities.Mob;
 import com.graphics_2d.world.entities.Player;
 import com.graphics_2d.world.*;
@@ -51,7 +50,7 @@ public class GameWindow extends JFrame implements WorldUpdateHandler {
         addKeyListener(keyboardHandler);
         world.setWorldUpdateHandler(this);
 
-        for(ImageAsset imageAsset : ImageAssets.ALL_ASSETS) {
+        for(ImageAsset imageAsset : ImageAsset.ASSETS_BY_ID.values()) {
             imageAsset.addToSpriteSheet(spriteSheet);
         }
         hud.update();
@@ -102,11 +101,12 @@ public class GameWindow extends JFrame implements WorldUpdateHandler {
                 if (tx >= 0 && tx < Const.WORLD_SIZE && ty >= 0 && ty < Const.WORLD_SIZE) {
                     Tile tile = world.getTileAt(tx, ty);
                     spriteSheet.drawTile(g2d, x * tileWidth + startX, y * tileHeight + startY,
-                            tileWidth, tileHeight, tile.getImageAsset().getIndex());
-                    GameObject obj = world.getObjectAt(tx, ty);
+                            tileWidth, tileHeight, tile.getImageAsset().getId());
+                    ObjectInstance obj = world.getObjectAt(tx, ty);
                     if (obj != null) {
+                        GameObject gObj = GameObject.OBJECTS_BY_ID.get(obj.getObjectId());
                         spriteSheet.drawTile(g2d, x * tileWidth + startX, y * tileHeight + startY,
-                                tileWidth, tileHeight, obj.getImageAsset().getIndex());
+                                tileWidth, tileHeight, gObj.getImageAsset(obj.getUsesLeft()).getId());
                     }
                 } else {
                     // Off the map
@@ -116,21 +116,29 @@ public class GameWindow extends JFrame implements WorldUpdateHandler {
                 Mob mob = world.getMobAt(tx, ty);
                 if (mob != null) {
                     spriteSheet.drawTile(g2d, x * tileWidth + startX, y * tileHeight + startY,
-                            tileWidth, tileHeight, mob.getImageAsset().getIndex());
+                            tileWidth, tileHeight, mob.getImageAsset().getId());
                 }
                 if (tx == loc.getX() && ty == loc.getY()) {
                     if (player.getHealth() > 0) {
                         spriteSheet.drawTile(g2d, x * tileWidth + startX, y * tileHeight + startY,
                                 tileWidth, tileHeight,
-                                player.isFlying() ? ImageAssets.GUY_FLY.getIndex() : ImageAssets.GUY.getIndex()); // guy block
+                                player.isFlying() ? ImageAssets.GUY_FLY.getId() : ImageAssets.GUY.getId()); // guy block
                     } else {
                         spriteSheet.drawTile(g2d, x * tileWidth + startX, y * tileHeight + startY,
-                                tileWidth, tileHeight, ImageAssets.DEAD.getIndex()); // dead guy block
+                                tileWidth, tileHeight, ImageAssets.DEAD.getId()); // dead guy block
+                    }
+                    if (player.getBuildingIndex() > 0) {
+                        Integer bObj = player.getBuildingObjectIndex();
+                        if (bObj != null) {
+                            GameObject gObj = GameObject.OBJECTS_BY_ID.get(bObj);
+                            spriteSheet.drawTile(g2d, x * tileWidth + startX, y * tileHeight + startY,
+                                    tileWidth / 2, tileHeight / 2, gObj.getImageAsset(0).getId());
+                        }
                     }
                     Tile tileAt = world.getTileAt(tx, ty);
                     if (tileAt.isSwim()) {
                         spriteSheet.drawTile(g2d, x * tileWidth + startX, y * tileHeight + startY,
-                                tileWidth, tileHeight, tileAt.getSwimAsset().getIndex()); //swim cover
+                                tileWidth, tileHeight, tileAt.getSwimAsset().getId()); //swim cover
                     }
                 }
             }

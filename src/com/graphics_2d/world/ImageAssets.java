@@ -1,5 +1,9 @@
 package com.graphics_2d.world;
 
+import java.io.IOException;
+
+import static java.lang.System.exit;
+
 public class ImageAssets {
 
     public static ImageAsset GUY = new ImageAsset("images/guy.png");
@@ -12,10 +16,13 @@ public class ImageAssets {
     public static ImageAsset LAVA = new ImageAsset("images/Lava.png");
     public static ImageAsset SAND = new ImageAsset("images/Sand.png");
     public static ImageAsset TREE = new ImageAsset("images/tree1.png");
+    public static ImageAsset TREE_1 = new ImageAsset("images/tree1_1.png");
     public static ImageAsset CACTUS = new ImageAsset("images/cactus.png");
     public static ImageAsset SNOW = new ImageAsset("images/snow.png");
     public static ImageAsset ICE = new ImageAsset("images/ice.png");
     public static ImageAsset SPRUCE_TREE = new ImageAsset("images/Spruce Tree.png");
+
+    public static ImageAsset SPRUCE_TREE_1 = new ImageAsset("images/spruce_1.png");
     public static ImageAsset IRON = new ImageAsset("images/iron.png");
     public static ImageAsset GOLD = new ImageAsset("images/Gold.png");
     public static ImageAsset DIAMOND = new ImageAsset("images/diamond.png");
@@ -38,31 +45,20 @@ public class ImageAssets {
     public static ImageAsset X = new ImageAsset("images/x.png");
     public static ImageAsset PICKAXE = new ImageAsset("images/Pickaxe.png");
     public static ImageAsset BOULDER = new ImageAsset("images/boulder.png");
+    public static ImageAsset BOULDER_1 = new ImageAsset("images/boulder_1.png");
+    public static ImageAsset BOULDER_2 = new ImageAsset("images/boulder_2.png");
     public static ImageAsset COW = new ImageAsset("images/cow.png");
     public static ImageAsset BRICK = new ImageAsset("images/brick.png");
+    public static ImageAsset BASIC_SWORD = new ImageAsset("images/sword.png");
 
-    public static ImageAsset[] ALL_ASSETS = {
-            LAVA_MONSTER,
-            PORK_CHOP, SNAKE, SEA_DRAGON, BREAD, BEEF,
-            GUY, DEAD,
-            STONE,
-            GRASS,
-            FOREST_GRASS,
-            WATER,
-            DIRT,
-            LAVA,
-            SAND,
-            TREE,
-            CACTUS,
-            SNOW,
-            ICE,
-            SPRUCE_TREE,
-            IRON, GOLD, DIAMOND,
-            IN_WATER, IN_LAVA, GUY_FLY,
-            TWIG, ROCK,
-            AXE, CHECK, X, PICKAXE,
-            BOULDER,
-            COW,
-            BRICK
-    };
+    public static void initialize() {
+        for (ImageAsset imageAsset : ImageAsset.ASSETS_BY_ID.values()) {
+            try {
+                imageAsset.initialize();
+            } catch (IOException e) {
+                System.out.println("Couldn't load " + imageAsset.getFileName());
+                exit(1);
+            }
+        }
+    }
 }

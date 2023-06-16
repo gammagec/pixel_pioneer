@@ -19,4 +19,7 @@ public class Const {
     public static int MAX_RIVER_WIDTH = 10;
 
     public static int DEFAULT_GROW_BIOMES = 0; // was 10
+
+    public static int INVENTORY_WIDTH = 10;
+    public static int INVENTORY_HEIGHT = 8;
 }

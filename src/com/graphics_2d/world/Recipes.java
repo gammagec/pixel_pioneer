@@ -17,7 +17,12 @@ public class Recipes {
         put(GameObjects.ROCK.getId(), 2);
     }}, GameObjects.BRICK.getId(), 1);
 
+    public static final Recipe BASIC_SWORD = new Recipe(new HashMap<>() {{
+        put(GameObjects.ROCK.getId(), 3);
+        put(GameObjects.TWIG.getId(), 2);
+    }}, GameObjects.BASIC_SWORD.getId(), 1);
+
     public static final Recipe[] ALL_RECIPES = {
-            BASIC_AXE,BASIC_PICKAXE, BRICK
+            BASIC_AXE,BASIC_PICKAXE, BRICK, BASIC_SWORD
     };
 }

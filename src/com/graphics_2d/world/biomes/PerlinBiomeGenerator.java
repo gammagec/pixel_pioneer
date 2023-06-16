@@ -2,6 +2,7 @@ package com.graphics_2d.world.biomes;
 
 import com.graphics_2d.Const;
 import com.graphics_2d.util.PointI;
+import com.graphics_2d.world.LocationInfo;
 import com.graphics_2d.world.World;
 
 import java.util.*;
@@ -23,17 +24,17 @@ public class PerlinBiomeGenerator implements BiomeGenerator {
     PerlinNoiseGenerator generator = new PerlinNoiseGenerator(random.nextGaussian() * 255);
 
     @Override
-    public void generateBiomes(int[][] biomes, World world) {
+    public void generateBiomes(LocationInfo[][] locations, World world) {
 
         for (int y = 0; y < Const.WORLD_SIZE; y++) {
             for (int x = 0; x < Const.WORLD_SIZE; x++) {
                 double noise = generator.noise(x, y, 32);
                 int height = (int) Math.floor((((noise + 1) / 2) * 7));
                 switch (height) {
-                    case 0, 1, 2 -> biomes[y][x] = Biomes.WATER.getBiomeId();
-                    case 3, 4 -> biomes[y][x] = Biomes.PLAINS.getBiomeId();
-                    case 5 -> biomes[y][x] = Biomes.MOUNTAIN.getBiomeId();
-                    case 6 -> biomes[y][x] = Biomes.SNOW.getBiomeId();
+                    case 0, 1, 2 -> locations[y][x].setBiomeId(Biomes.WATER.getBiomeId());
+                    case 3, 4 -> locations[y][x].setBiomeId(Biomes.PLAINS.getBiomeId());
+                    case 5 -> locations[y][x].setBiomeId(Biomes.MOUNTAIN.getBiomeId());
+                    case 6 -> locations[y][x].setBiomeId(Biomes.SNOW.getBiomeId());
                 }
             }
         }
@@ -45,10 +46,10 @@ public class PerlinBiomeGenerator implements BiomeGenerator {
             for (int x = 0; x < Const.WORLD_SIZE; x++) {
                 double noise = generator.noise(x, y, 32);
                 int opt = (int) Math.floor((((noise + 1) / 2) * 5));
-                if (biomes[y][x] == Biomes.PLAINS.getBiomeId()) {
+                if (locations[y][x].getBiomeId() == Biomes.PLAINS.getBiomeId()) {
                     switch (opt) {
-                        case 0, 1, 2 -> biomes[y][x] = Biomes.PLAINS.getBiomeId();
-                        case 3, 4 -> biomes[y][x] = Biomes.FOREST.getBiomeId();
+                        case 0, 1, 2 -> locations[y][x].setBiomeId(Biomes.PLAINS.getBiomeId());
+                        case 3, 4 -> locations[y][x].setBiomeId(Biomes.FOREST.getBiomeId());
                     }
                 }
             }
@@ -64,16 +65,16 @@ public class PerlinBiomeGenerator implements BiomeGenerator {
                 int opt = (int) Math.floor((((noise + 1) / 2) * 6));
                 double distanceFromCenter = Math.sqrt(Math.pow(x - center.getX(), 2) + Math.pow(y - center.getY(), 2));
                 double distanceRatio = distanceFromCenter / Const.WORLD_SIZE;
-                if (biomes[y][x] == Biomes.PLAINS.getBiomeId()) {
+                if (locations[y][x].getBiomeId() == Biomes.PLAINS.getBiomeId()) {
                     if (opt * distanceRatio > 1.3) {
-                        biomes[y][x] = Biomes.SNOW.getBiomeId();
+                        locations[y][x].setBiomeId(Biomes.SNOW.getBiomeId());
                     } else if (opt * distanceRatio < 0.2) {
-                        biomes[y][x] = Biomes.DESERT.getBiomeId();
+                        locations[y][x].setBiomeId(Biomes.DESERT.getBiomeId());
                     }
                 }
-                if (biomes[y][x] == Biomes.WATER.getBiomeId()) {
+                if (locations[y][x].getBiomeId() == Biomes.WATER.getBiomeId()) {
                     if (opt * distanceRatio > 1.3) {
-                        biomes[y][x] = Biomes.ICE.getBiomeId();
+                        locations[y][x].setBiomeId(Biomes.ICE.getBiomeId());
                     }
                 }
             }

@@ -1,6 +1,7 @@
 package com.graphics_2d.world.biomes;
 
 import com.graphics_2d.Const;
+import com.graphics_2d.world.LocationInfo;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -10,11 +11,11 @@ public class DefaultBiomeGrower implements BiomeGrower {
     private final Random random = new Random();
 
     @Override
-    public void growBiomes(int[][] biomes, Integer[] growOnly) {
+    public void growBiomes(LocationInfo[][] locations, Integer[] growOnly) {
         Set<Integer> growSet = Arrays.stream(growOnly).collect(Collectors.toSet());
         for (int i = 0; i < Const.WORLD_SIZE; i++) {
             for (int j = 0; j < Const.WORLD_SIZE; j++) {
-                int b = biomes[i][j];
+                int b = locations[i][j].getBiomeId();
                 if (growSet.size() > 0 && !growSet.contains(b)) {
                     continue;
                 }
@@ -36,7 +37,7 @@ public class DefaultBiomeGrower implements BiomeGrower {
                     int y = neighbor[0];
                     if (x > 0 && y > 0 && x < Const.WORLD_SIZE && y < Const.WORLD_SIZE) {
                         validNeighbors++;
-                        if (biomes[y][x] == b) {
+                        if (locations[y][x].getBiomeId() == b) {
                             weight++;
                         } else {
                             openNeighbors.add(Arrays.asList(y, x));
@@ -52,7 +53,7 @@ public class DefaultBiomeGrower implements BiomeGrower {
                 int rand = random.nextInt(10 - invalidNeighbors);
                 if (rand < weight) {
                     List<Integer> neighbor = openNeighbors.get(random.nextInt(openNeighbors.size()));
-                    biomes[neighbor.get(0)][neighbor.get(1)] = b;
+                    locations[neighbor.get(0)][neighbor.get(1)].setBiomeId(b);
                 }
             }
         }

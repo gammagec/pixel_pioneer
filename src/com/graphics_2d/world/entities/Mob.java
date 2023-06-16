@@ -1,10 +1,7 @@
 package com.graphics_2d.world.entities;
 
 import com.graphics_2d.util.PointI;
-import com.graphics_2d.world.ImageAsset;
-import com.graphics_2d.world.ImageAssets;
-import com.graphics_2d.world.Tile;
-import com.graphics_2d.world.World;
+import com.graphics_2d.world.*;
 import com.graphics_2d.world.biomes.Biome;
 import com.graphics_2d.world.biomes.Biomes;
 
@@ -76,6 +73,13 @@ public class Mob extends Entity {
 
     public ImageAsset getImageAsset() {
         return imageAssetForType(type);
+    }
+
+    public ObjectInstance getMobDrop() {
+        return switch (type) {
+            case SNAKE, LAVA_MONSTER, SEA_DRAGON -> null;
+            case COW -> new ObjectInstance(GameObjects.BEEF.getId(), GameObjects.BEEF.getUses());
+        };
     }
 
     public void update() {

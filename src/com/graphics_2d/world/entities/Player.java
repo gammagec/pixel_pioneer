@@ -2,11 +2,11 @@ package com.graphics_2d.world.entities;
 
 import com.graphics_2d.Const;
 import com.graphics_2d.world.GameObject;
+import com.graphics_2d.world.ObjectInstance;
 import com.graphics_2d.world.Recipe;
 import com.graphics_2d.world.World;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class Player extends Entity {
 
@@ -18,9 +18,9 @@ public class Player extends Entity {
     private int stamina = Const.MAX_STAMINA;
 
     private int building = 0;
-    private boolean eating = false;
     private boolean flying = false;
-    private final Map<Integer, Integer> objects = new HashMap<>();
+
+    private final ObjectInstance[][] inventory = new ObjectInstance[Const.INVENTORY_HEIGHT][Const.INVENTORY_WIDTH];
 
     public Player() {
     }
@@ -33,10 +33,6 @@ public class Player extends Entity {
         setLocation(world.randomSpawnPoint());
     }
 
-    public Integer[] getObjects() {
-        return objects.keySet().toArray(new Integer[0]);
-    }
-
     public void takeDamage(int damage) {
         health = health - damage;
         if (health < 0) {
@@ -45,7 +41,16 @@ public class Player extends Entity {
     }
 
     public Integer getObjectCount(Integer objId) {
-        return objects.get(objId);
+        int count = 0;
+        for (int y = 0; y < Const.INVENTORY_HEIGHT; y++) {
+            for (int x = 0; x < Const.INVENTORY_WIDTH; x++) {
+                ObjectInstance obj = inventory[y][x];
+                if (obj != null && obj.getObjectId() == objId) {
+                   count += obj.getCount();
+                }
+            }
+        }
+        return count;
     }
 
     public boolean isAlive() {
@@ -92,41 +97,61 @@ public class Player extends Entity {
         stamina -= amt;
     }
 
-    public void giveObject(GameObject object) {
-        int index = object.getId();
-        if (objects.containsKey(index)) {
-            int amt = objects.get(index);
-            objects.put(index, amt + 1);
-        } else {
-            objects.put(index, 1);
+    public void giveObject(ObjectInstance object) {
+        boolean foundFirst = false;
+        int sx = 0;
+        int sy = 0;
+        for (int y = 0; y < Const.INVENTORY_HEIGHT; y++) {
+            for (int x = 0; x < Const.INVENTORY_WIDTH; x++) {
+                ObjectInstance obj = inventory[y][x];
+                if (obj != null) {
+                    if (obj.same(object)) {
+                        obj.addInstances(object.getCount());
+                        return;
+                    }
+                } else if (!foundFirst){
+                    foundFirst = true;
+                    sx = x;
+                    sy = y;
+                }
+            }
+        }
+        if (foundFirst) { // if not, inv full
+            inventory[sy][sx] = object;
         }
     }
 
     public Integer getBuildingObjectIndex() {
-        if (building > 0) {
-            return (Integer) objects.keySet().toArray()[building - 1];
+        if (building > 0 && building < Const.INVENTORY_WIDTH + 1) {
+            return inventory[0][building - 1].getObjectId();
         } else {
             return null;
         }
     }
 
     public void removeObject(int objIndex) {
-        if (objects.containsKey(objIndex)) {
-            int amt = objects.get(objIndex);
-            if (amt > 1) {
-                objects.put(objIndex, amt - 1);
-            } else {
-                objects.remove(objIndex);
+        for (int y = 0; y < Const.INVENTORY_HEIGHT; y++) {
+            for (int x = 0; x < Const.INVENTORY_WIDTH; x++) {
+                ObjectInstance obj = inventory[y][x];
+                if (obj != null && obj.getObjectId() == objIndex) {
+                    if (obj.getCount() > 1) {
+                        obj.reduceCount(1);
+                    } else {
+                        inventory[y][x] = null;
+                    }
+                }
             }
         }
     }
 
     public Integer getObjectIdFromHotbarIndex(int hotbarIndex) {
-        if (hotbarIndex <= objects.keySet().size() && hotbarIndex > 0) {
-            return (Integer) objects.keySet().toArray()[hotbarIndex - 1];
-        } else {
-            return null;
+        if (hotbarIndex < Const.INVENTORY_WIDTH + 1 && hotbarIndex > 0) {
+            ObjectInstance obj = inventory[0][hotbarIndex - 1];
+            if (obj != null) {
+                return obj.getObjectId();
+            }
         }
+        return null;
     }
 
     public void eatObject(GameObject obj) {
@@ -148,25 +173,23 @@ public class Player extends Entity {
 
     public void craftRecipe(Recipe selectedRecipe) {
         for (Map.Entry<Integer, Integer> e : selectedRecipe.getRequiredObjects().entrySet()) {
-            Integer count = objects.get(e.getKey());
+            Integer count = getObjectCount(e.getKey());
             if (count != null && count < e.getValue()) {
                 return;
             }
         }
         for (Map.Entry<Integer, Integer> e : selectedRecipe.getRequiredObjects().entrySet()) {
-            Integer count = objects.get(e.getKey());
-            if (count > e.getValue()) {
-                objects.put(e.getKey(), count - e.getValue());
-            } else {
-                objects.remove(e.getKey());
+            for (int i = 0; i < e.getValue(); i++) {
+                removeObject(e.getKey());
             }
         }
-        if (objects.containsKey(selectedRecipe.getOutputObjectId())) {
-            objects.put(
-                    selectedRecipe.getOutputObjectId(),
-                    objects.get(selectedRecipe.getOutputObjectId()) + selectedRecipe.getAmount());
-        } else {
-            objects.put(selectedRecipe.getOutputObjectId(), selectedRecipe.getAmount());
-        }
+        int objId = selectedRecipe.getOutputObjectId();
+        GameObject gObj = GameObject.OBJECTS_BY_ID.get(objId);
+        ObjectInstance objectInstance = new ObjectInstance(objId, gObj.getUses());
+        giveObject(objectInstance);
+    }
+
+    public ObjectInstance getInventoryAt(int x, int y) {
+        return inventory[y][x];
     }
 }

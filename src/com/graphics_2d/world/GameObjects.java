@@ -2,7 +2,6 @@ package com.graphics_2d.world;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 
 public class GameObjects {
     public static GameObject NO_OBJECT = new GameObject("nothing", null);
@@ -52,8 +51,16 @@ public class GameObjects {
         setCanUse(true);
     }};
 
+    public static GameObject BASIC_SWORD = new GameObject("sword", ImageAssets.BASIC_SWORD) {{
+        setCanPickup(true);
+        setCanUse(true);
+    }};
+
     public static GameObject BOULDER = new GameObject("boulder", ImageAssets.BOULDER) {{
         setBlocking(true);
+        setUses(3);
+        setAssetAtUse(2, ImageAssets.BOULDER_2);
+        setAssetAtUse(1, ImageAssets.BOULDER_1);
         addUseEffect(new UseEffect(new HashSet<>() {{
             add(GameObjects.BASIC_PICK_AXE.getId());
         }}, new HashMap<>() {{
@@ -64,6 +71,8 @@ public class GameObjects {
 
     public static GameObject TREE = new GameObject("tree", ImageAssets.TREE) {{
         setBlocking(true);
+        setUses(2);
+        setAssetAtUse(1, ImageAssets.TREE_1);
         addUseEffect(new UseEffect(new HashSet<>() {{
             add(GameObjects.BASIC_AXE.getId());
         }}, new HashMap<>() {{
@@ -73,6 +82,8 @@ public class GameObjects {
 
     public static GameObject SPRUCE_TREE = new GameObject("Spruce Tree", ImageAssets.SPRUCE_TREE) {{
         setBlocking(true);
+        setUses(2);
+        setAssetAtUse(1, ImageAssets.SPRUCE_TREE_1);
         addUseEffect(new UseEffect(new HashSet<>() {{
             add(GameObjects.BASIC_AXE.getId());
         }}, new HashMap<>() {{
@@ -89,25 +100,5 @@ public class GameObjects {
         }}, new HashMap<>() {{
             put(GameObjects.SELF.getId(), 1);
         }}, 1));
-    }};
-
-    public static GameObject[] ALL_OBJECTS = new GameObject[] {
-            TREE,
-            CACTUS,
-            SPRUCE_TREE,
-            IRON,
-            GOLD,
-            DIAMOND,
-            BEEF,
-            PORK_CHOP,
-            BREAD,
-            TWIG, ROCK, BASIC_AXE, BASIC_PICK_AXE,
-            BOULDER, BRICK
-    };
-
-    public static Map<Integer, GameObject> OBJECTS_BY_ID = new HashMap<>() {{
-       for (GameObject obj : ALL_OBJECTS) {
-           put(obj.getId(), obj);
-       }
     }};
 }

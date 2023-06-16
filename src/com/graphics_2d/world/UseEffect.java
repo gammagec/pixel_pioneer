@@ -6,23 +6,23 @@ import java.util.Set;
 public class UseEffect {
     private final Set<Integer> triggerObjects;
     private final Map<Integer, Integer> resultObjects;
-    private final int usesBeforeDestroy; // 0 is infinite
+    private final int usesConsumed;
 
-    public UseEffect(Set<Integer> triggerObjects, Map<Integer, Integer> resultObjects, int usesBeforeDestroy) {
+    public UseEffect(Set<Integer> triggerObjects, Map<Integer, Integer> resultObjects, int usesConsumed) {
         this.triggerObjects = triggerObjects;
         this.resultObjects = resultObjects;
-        this.usesBeforeDestroy = usesBeforeDestroy;
+        this.usesConsumed = usesConsumed;
     }
 
     public boolean isTriggerObject(Integer objectId) {
         return triggerObjects.contains(objectId);
     }
 
-    public Map<Integer, Integer> use() {
-        return resultObjects;
+    public int getUsesConsumed() {
+        return usesConsumed;
     }
 
-    public int getUsesBeforeDestroy() {
-        return usesBeforeDestroy;
+    public Map<Integer, Integer> use() {
+        return resultObjects;
     }
 }

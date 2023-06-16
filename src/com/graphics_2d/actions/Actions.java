@@ -10,6 +10,7 @@ import com.graphics_2d.ui.MiniMap;
 import com.graphics_2d.util.Direction;
 import com.graphics_2d.util.PointI;
 import com.graphics_2d.world.*;
+import com.graphics_2d.world.entities.Mob;
 import com.graphics_2d.world.entities.Player;
 
 import java.util.Map;
@@ -113,7 +114,7 @@ public class Actions {
         PointI loc = player.getLocation();
         Integer id = player.getObjectIdFromHotbarIndex(player.getBuildingIndex() + 1);
         if (id != null) {
-            GameObject obj = GameObjects.OBJECTS_BY_ID.get(id);
+            GameObject obj = GameObject.OBJECTS_BY_ID.get(id);
             switch (d) {
                 case NORTH -> useLoc(loc.delta(0, -1), obj);
                 case SOUTH -> useLoc(loc.delta(0, 1), obj);
@@ -122,6 +123,7 @@ public class Actions {
             }
         }
         // after use
+        player.setBuildingIndex(0);
         keyboardHandler.setWorldMode();
         hud.update();
         inventory.update();
@@ -129,18 +131,31 @@ public class Actions {
     }
 
     private void useLoc(PointI loc, GameObject obj) {
-        GameObject objUseOn = world.getObjectAt(loc.getX(), loc.getY());
+        ObjectInstance objUseOn = world.getObjectAt(loc.getX(), loc.getY());
         if (objUseOn != null) {
-            System.out.println("Attempting to use " + obj.getName() + " on " + objUseOn.getName());
-            for (UseEffect effect : objUseOn.getUseEffects()) {
+            GameObject gObjUseOn = GameObject.OBJECTS_BY_ID.get(objUseOn.getObjectId());
+            System.out.println("Attempting to use " + obj.getName() + " on " + gObjUseOn.getName());
+            for (UseEffect effect : gObjUseOn.getUseEffects()) {
                 if (effect.isTriggerObject(obj.getId())) {
-                    world.removeObject(loc.getX(), loc.getY());
+                    int uses = objUseOn.getUsesLeft();
+                    if (uses < effect.getUsesConsumed()) {
+                        return;
+                    }
+                    uses -= effect.getUsesConsumed();
+                    System.out.println("uses left " + uses);
+                    if (uses == 0) {
+                        System.out.println("remove");
+                        world.removeObject(loc.getX(), loc.getY());
+                    } else {
+                        System.out.println("minus use");
+                        objUseOn.setUses(uses);
+                    }
                     for (Map.Entry<Integer, Integer> entry : effect.use().entrySet()) {
                         for (int i = 0; i < entry.getValue(); i++) {
                             if (entry.getKey() == GameObjects.SELF.getId()) {
-                                player.giveObject(GameObjects.OBJECTS_BY_ID.get(obj.getId()));
+                                player.giveObject(new ObjectInstance(obj.getId(), obj.getUses()));
                             } else {
-                                player.giveObject(GameObjects.OBJECTS_BY_ID.get(entry.getKey()));
+                                player.giveObject(new ObjectInstance(entry.getKey(), obj.getUses()));
                             }
                         }
                     }
@@ -148,15 +163,20 @@ public class Actions {
                 }
             }
         } else if (obj.isCanBuild()){
-            world.putObject(loc.getX(), loc.getY(), obj.getId());
+            world.putObject(loc.getX(), loc.getY(), new ObjectInstance(obj.getId(), obj.getUses()));
             player.removeObject(obj.getId());
+        } else {
+            Mob mob = world.getMobAt(loc.getX(), loc.getY());
+            if (mob != null) {
+                world.killMob(mob);
+            }
         }
     }
 
     public void onHotBar(int index) {
         Integer objId = player.getObjectIdFromHotbarIndex(index);
         if (objId != null) {
-            GameObject obj = GameObjects.OBJECTS_BY_ID.get(objId);
+            GameObject obj = GameObject.OBJECTS_BY_ID.get(objId);
             if (obj.isCanEat()) {
                 player.eatObject(obj);
                 player.removeObject(obj.getId());
@@ -201,9 +221,10 @@ public class Actions {
         Player player = world.getPlayer();
         if (world.getObjectAt(x, y) == null) {
             Integer objIndex = player.getBuildingObjectIndex();
+            GameObject gObj = GameObject.OBJECTS_BY_ID.get(objIndex);
             if (objIndex != null) {
                 player.removeObject(objIndex);
-                world.putObject(x, y, objIndex);
+                world.putObject(x, y, new ObjectInstance(objIndex, gObj.getUses()));
             }
         }
         player.setBuildingIndex(0);
@@ -227,10 +248,11 @@ public class Actions {
             player.takeStamina(1);
             needsHudUpdate = true;
         }
-        GameObject obj = world.getObjectAt(loc.getX(), loc.getY());
+        ObjectInstance obj = world.getObjectAt(loc.getX(), loc.getY());
         if (obj != null && !player.isFlying()) {
-            damage += obj.getDamage();
-            if (obj.isCanPickup()) {
+            GameObject gObj = GameObject.OBJECTS_BY_ID.get(obj.getObjectId());
+            damage += gObj.getDamage();
+            if (gObj.isCanPickup()) {
                 world.pickupObject(loc.getX(), loc.getY());
                 needsInventoryUpdate = true;
                 needsHudUpdate = true;

@@ -1,9 +1,9 @@
 package com.graphics_2d.ui;
 
 import com.graphics_2d.Const;
+import com.graphics_2d.world.ObjectInstance;
 import com.graphics_2d.world.entities.Player;
 import com.graphics_2d.world.GameObject;
-import com.graphics_2d.world.GameObjects;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -49,21 +49,22 @@ public class Hud {
     void drawHotBar(Graphics2D g2d, int x, int y) {
         g2d.setColor(Color.darkGray);
         g2d.fillRect(x, y, 400, 90);
-        int i = 0;
         g2d.setColor(Color.RED);
-        for (Integer objId : player.getObjects()) {
-            int count = player.getObjectCount(objId);
-            GameObject obj = GameObjects.OBJECTS_BY_ID.get(objId);
-            int objImageIndex = obj.getImageAsset().getIndex();
-            spriteSheet.drawTile(g2d, x + 5 + (66 * i), y + 5, 64, 64, objImageIndex);
-            g2d.drawString(String.valueOf(i + 1), x + 5 + (66 * i), y + 25);
-            g2d.drawString(String.valueOf(count), x + 5 + (66 * i), y + 65);
-            if (i == player.getBuildingIndex()) {
-                g2d.setColor(Color.RED);
-                g2d.drawRect(x + (66 * i), y + 4, 65, 65);
+
+        for (int i = 0; i < Const.INVENTORY_WIDTH; i++) {
+            ObjectInstance obj = player.getInventoryAt(i, 0);
+            if (obj != null) {
+                int count = obj.getCount();
+                GameObject gObj = GameObject.OBJECTS_BY_ID.get(obj.getObjectId());
+                int objImageIndex = gObj.getImageAsset(0).getId();
+                spriteSheet.drawTile(g2d, x + 5 + (66 * i), y + 5, 64, 64, objImageIndex);
+                g2d.drawString(String.valueOf(i + 1), x + 5 + (66 * i), y + 25);
+                g2d.drawString(String.valueOf(count), x + 5 + (66 * i), y + 65);
+                if (i == player.getBuildingIndex()) {
+                    g2d.setColor(Color.RED);
+                    g2d.drawRect(x + (66 * i), y + 4, 65, 65);
+                }
             }
-            i++;
-            if (i == 10) break;
         }
     }
 

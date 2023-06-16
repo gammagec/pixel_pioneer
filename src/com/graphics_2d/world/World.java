@@ -6,19 +6,13 @@ import com.graphics_2d.world.biomes.*;
 import com.graphics_2d.world.entities.Mob;
 import com.graphics_2d.world.entities.Player;
 
-import java.io.IOException;
 import java.util.*;
 
-import static java.lang.System.exit;
-
 public class World {
-
     private final Player player = new Player();
     private WorldUpdateHandler worldUpdateHandler = null;
 
-    private final int[][] tiles = new int[Const.WORLD_SIZE][Const.WORLD_SIZE];
-    private final int[][] objects = new int[Const.WORLD_SIZE][Const.WORLD_SIZE];
-    private final int[][] tileBiomes = new int[Const.WORLD_SIZE][Const.WORLD_SIZE];
+    private final LocationInfo[][] locations = new LocationInfo[Const.WORLD_SIZE][Const.WORLD_SIZE];
 
     private final List<Mob> mobs = new ArrayList<>();
     private final Random random = new Random();
@@ -28,15 +22,13 @@ public class World {
     private final BiomeGrower biomeGrower = new DefaultBiomeGrower();
 
     public World() {
-        for (ImageAsset imageAsset : ImageAssets.ALL_ASSETS) {
-            try {
-                imageAsset.initialize();
-            } catch (IOException e) {
-                System.out.println("Couldn't load " + imageAsset.getFileName());
-                exit(1);
+        ImageAssets.initialize();
+
+        for (int y = 0; y < Const.WORLD_SIZE; y++) {
+            for (int x = 0; x < Const.WORLD_SIZE; x++) {
+                locations[y][x] = new LocationInfo();
             }
         }
-
         generateBiomes();
         generateMap();
 
@@ -57,12 +49,18 @@ public class World {
         return null;
     }
 
+    public void killMob(Mob mob) {
+        mobs.remove(mob);
+        PointI loc = mob.getLocation();
+        putObject(loc.getX(), loc.getY(), mob.getMobDrop());
+    }
+
     public Player getPlayer() {
         return player;
     }
 
     public void generateBiomes() {
-        biomeGenerator.generateBiomes(tileBiomes, this);
+        biomeGenerator.generateBiomes(locations, this);
 
         for(int i = 0; i < Const.DEFAULT_GROW_BIOMES; i++) {
             growBiomes();
@@ -84,10 +82,11 @@ public class World {
             int x = random.nextInt(Const.WORLD_SIZE);
             int y = random.nextInt(Const.WORLD_SIZE);
             Tile tile = getTileAt(x, y);
-            GameObject obj = getObjectAt(x, y);
+            ObjectInstance obj = getObjectAt(x, y);
             boolean objBlocking = false;
             if (obj != null) {
-                objBlocking = obj.isBlocking();
+                GameObject gObj = GameObject.OBJECTS_BY_ID.get(obj.getObjectId());
+                objBlocking = gObj.isBlocking();
             }
             Integer biome = getBiomeAt(x, y).getBiomeId();
             if ((includeSwim || !tile.isSwim()) &&
@@ -105,42 +104,40 @@ public class World {
     }
 
     public void growBiomes() {
-        biomeGrower.growBiomes(tileBiomes, new Integer[] {});
+        biomeGrower.growBiomes(locations, new Integer[] {});
     }
 
     public void growBiomes(Integer[] biomes) {
-        biomeGrower.growBiomes(tileBiomes, biomes);
+        biomeGrower.growBiomes(locations, biomes);
     }
 
     public void removeObject(int x, int y) {
-        objects[y][x] = -1;
+        locations[y][x].setObjectInstance(null);
     }
 
     public void pickupObject(int x, int y) {
-        player.giveObject(GameObjects.OBJECTS_BY_ID.get(objects[y][x]));
-        objects[y][x] = -1;
+        ObjectInstance obj = locations[y][x].getObjectInstance();
+        if (obj != null) {
+            player.giveObject(obj);
+            locations[y][x].setObjectInstance(null);
+        }
     }
 
     public Tile getTileAt(int x, int y) {
-        return Tiles.TILES_BY_ID.get(tiles[y][x]);
+        return Tiles.TILES_BY_ID.get(locations[y][x].getTileId());
     }
 
     public Biome getBiomeAt(int x, int y) {
         if (inBounds(x, y)) {
-            int biomeId = tileBiomes[y][x];
+            int biomeId = locations[y][x].getBiomeId();
             return Biomes.BIOMES_BY_ID.get(biomeId);
         }
         return null;
     }
 
-    public GameObject getObjectAt(int x, int y) {
+    public ObjectInstance getObjectAt(int x, int y) {
         if (inBounds(x, y)) {
-            int objId = objects[y][x];
-            if (objId == -1) {
-                return null;
-            } else {
-                return GameObjects.OBJECTS_BY_ID.get(objects[y][x]);
-            }
+            return locations[y][x].getObjectInstance();
         } else {
             return null;
         }
@@ -150,21 +147,21 @@ public class World {
         // This is the map generation!
         for(int i = 0; i < Const.WORLD_SIZE; i++) {
             for (int j = 0; j < Const.WORLD_SIZE; j++) {
-                int biomeId = tileBiomes[i][j];
+                int biomeId = locations[i][j].getBiomeId();
                 Biome b = Biomes.BIOMES_BY_ID.get(biomeId);
                 int tileId = b.getRandomTileIndex();
-                tiles[i][j] = tileId;
+                locations[i][j].setTileId(tileId);
             }
         }
         for (int i = 0; i < Const.WORLD_SIZE; i++) {
             for (int j = 0; j < Const.WORLD_SIZE; j++) {
-                int biomeId = tileBiomes[i][j];
+                int biomeId = locations[i][j].getBiomeId();
                 Biome b = Biomes.BIOMES_BY_ID.get(biomeId);
                 GameObject obj = b.getRandomObject();
                 if (obj != GameObjects.NO_OBJECT && obj != null) {
-                    objects[i][j] = obj.getId();
+                    locations[i][j].setObjectInstance(new ObjectInstance(obj.getId(), obj.getUses()));
                 } else {
-                    objects[i][j] = -1;
+                    locations[i][j].setObjectInstance(null);
                 }
             }
         }
@@ -180,28 +177,21 @@ public class World {
                 case 0 -> { // east
                     for (int i = 0; i < width; i++) {
                         if (inBounds(x, y + i)) {
-                            tileBiomes[y + i][x] = Biomes.WATER.getBiomeId();
+                            locations[y + i][x].setBiomeId(Biomes.WATER.getBiomeId());
                         }
                     }
                 }
-                case 1 -> { // south
+                case 1, 3 -> { // south, north
                     for (int i = 0; i < width; i++) {
                         if (inBounds(x - i, y)) {
-                            tileBiomes[y][x - i] = Biomes.WATER.getBiomeId();
+                            locations[y][x - i].setBiomeId(Biomes.WATER.getBiomeId());
                         }
                     }
                 }
                 case 2 -> { // west
                     for (int i = 0; i < width; i++) {
                         if (inBounds(x, y - i)) {
-                            tileBiomes[y - i][x] = Biomes.WATER.getBiomeId();
-                        }
-                    }
-                }
-                case 3 -> { // north
-                    for (int i = 0; i < width; i++) {
-                        if (inBounds(x - i, y)) {
-                            tileBiomes[y][x - i] = Biomes.WATER.getBiomeId();
+                            locations[y - i][x].setBiomeId(Biomes.WATER.getBiomeId());
                         }
                     }
                 }
@@ -230,11 +220,11 @@ public class World {
     }
 
     public boolean getBlocking(int x, int y) {
-        int objectIndex = objects[y][x];
-        if (objectIndex != -1 && GameObjects.OBJECTS_BY_ID.get(objectIndex).isBlocking()) {
+        ObjectInstance obj = locations[y][x].getObjectInstance();
+        if (obj != null && GameObject.OBJECTS_BY_ID.get(obj.getObjectId()).isBlocking()) {
             return true;
         }
-        return Tiles.TILES_BY_ID.get(tiles[y][x]).isBlocking();
+        return Tiles.TILES_BY_ID.get(locations[y][x].getTileId()).isBlocking();
     }
 
     public void setWorldUpdateHandler(WorldUpdateHandler worldUpdateHandler) {
@@ -253,9 +243,10 @@ public class World {
         }
     }
 
-    public void putObject(int x, int y, int objIndex) {
-        if (objects[y][x] == -1) {
-            objects[y][x] = objIndex;
+    public void putObject(int x, int y, ObjectInstance obj) {
+        ObjectInstance existingObj = locations[y][x].getObjectInstance();
+        if (existingObj == null) {
+            locations[y][x].setObjectInstance(obj);
         }
     }
 }

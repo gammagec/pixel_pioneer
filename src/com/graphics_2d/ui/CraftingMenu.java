@@ -50,31 +50,26 @@ public class CraftingMenu {
         int i = 0;
         for (Recipe recipe : Recipes.ALL_RECIPES) {
             spriteSheet.drawTile(g2d, x, y + (i * 67), 64, 64,
-                    GameObjects.OBJECTS_BY_ID.get(recipe.getOutputObjectId()).getImageAsset().getIndex());
+                    GameObject.OBJECTS_BY_ID.get(recipe.getOutputObjectId()).getImageAsset(0).getId());
             g2d.setColor(Color.BLUE);
             g2d.drawString(String.valueOf(recipe.getAmount()), x, y + (i * 67) + 30);
             int t = 0;
             boolean canMake = true;
-            Set<Integer> playerObjects = Set.of(player.getObjects());
             for (Map.Entry<Integer, Integer> entry : recipe.getRequiredObjects().entrySet()) {
                 spriteSheet.drawTile(g2d, x + 70 + (t * 67), y + (i * 67), 64, 64,
-                        GameObjects.OBJECTS_BY_ID.get(entry.getKey()).getImageAsset().getIndex());
+                        GameObject.OBJECTS_BY_ID.get(entry.getKey()).getImageAsset(0).getId());
                 g2d.drawString(String.valueOf(entry.getValue()), x + 70 + (t * 67), y + (i * 67) + 30);
-                if (playerObjects.contains(entry.getKey())) {
-                    if (player.getObjectCount(entry.getKey()) < entry.getValue()) {
-                        canMake = false;
-                    }
-                } else {
+                if (player.getObjectCount(entry.getKey()) < entry.getValue()) {
                     canMake = false;
                 }
                 t++;
             }
             if (canMake) {
                 spriteSheet.drawTile(g2d, x + 70 + (t * 67), y + (i * 67), 64, 64,
-                        ImageAssets.CHECK.getIndex());
+                        ImageAssets.CHECK.getId());
             } else {
                 spriteSheet.drawTile(g2d, x + 70 + (t * 67), y + (i * 67), 64, 64,
-                        ImageAssets.X.getIndex());
+                        ImageAssets.X.getId());
             }
             if (i == selection) {
                 g2d.setColor(Color.RED);
