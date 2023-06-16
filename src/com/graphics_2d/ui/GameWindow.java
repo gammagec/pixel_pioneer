@@ -46,7 +46,7 @@ public class GameWindow extends JFrame implements WorldUpdateHandler {
                 exit(0);
             }
         });
-        setSize(900, 900);
+        setSize(1200, 1200);
         addKeyListener(keyboardHandler);
         world.setWorldUpdateHandler(this);
 

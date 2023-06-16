@@ -294,7 +294,48 @@ public class Actions {
     }
 
     public void inventory() {
+        inventory.update();
         inventory.toggleOpen();
+        keyboardHandler.setInventoryMode();
+        aiEngine.setPaused(true);
+        world.worldUpdated();
+    }
+
+    public void invUp() {
+        inventory.moveSelection(0, -1);
+        inventory.update();
+        world.worldUpdated();
+    }
+
+    public void invDown() {
+        inventory.moveSelection(0, 1);
+        inventory.update();
+        world.worldUpdated();
+    }
+
+    public void invLeft() {
+        inventory.moveSelection(-1, 0);
+        inventory.update();
+        world.worldUpdated();
+    }
+
+    public void invRight() {
+        inventory.moveSelection(1, 0);
+        inventory.update();
+        world.worldUpdated();
+    }
+
+    public void invSpace() {
+        inventory.selectObject();
+        inventory.update();
+        hud.update();
+        world.worldUpdated();
+    }
+
+    public void endInventory() {
+        keyboardHandler.setWorldMode();
+        inventory.toggleOpen();
+        aiEngine.setPaused(false);
         world.worldUpdated();
     }
 

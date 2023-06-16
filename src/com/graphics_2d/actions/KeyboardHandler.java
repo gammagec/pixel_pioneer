@@ -26,6 +26,21 @@ public class KeyboardHandler extends KeyAdapter {
         }
     };
 
+    private final KeyAdapter inventoryMode = new KeyAdapter() {
+        @Override
+        public void keyPressed(KeyEvent e) {
+            int keyCode = e.getKeyCode();
+            switch (keyCode) {
+                case KeyEvent.VK_I, KeyEvent.VK_ESCAPE -> actions.endInventory();
+                case KeyEvent.VK_UP -> actions.invUp();
+                case KeyEvent.VK_DOWN -> actions.invDown();
+                case KeyEvent.VK_LEFT -> actions.invLeft();
+                case KeyEvent.VK_RIGHT -> actions.invRight();
+                case KeyEvent.VK_SPACE, KeyEvent.VK_ENTER -> actions.invSpace();
+            }
+        }
+    };
+
     private final KeyAdapter useMode = new KeyAdapter() {
         @Override
         public void keyPressed(KeyEvent e) {
@@ -68,6 +83,10 @@ public class KeyboardHandler extends KeyAdapter {
     };
 
     private KeyAdapter activeAdapter = worldMode;
+
+    public void setInventoryMode() {
+        activeAdapter = inventoryMode;
+    }
 
     public void keyPressed(KeyEvent e) {
         activeAdapter.keyPressed(e);

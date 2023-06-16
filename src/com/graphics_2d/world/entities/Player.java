@@ -192,4 +192,8 @@ public class Player extends Entity {
     public ObjectInstance getInventoryAt(int x, int y) {
         return inventory[y][x];
     }
+
+    public void setInventoryAt(int x, int y, ObjectInstance o) {
+        inventory[y][x] = o;
+    }
 }

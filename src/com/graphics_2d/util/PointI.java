@@ -2,7 +2,6 @@ package com.graphics_2d.util;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class PointI extends Point<Integer> {
     public PointI(Integer x, Integer y) {
@@ -27,5 +26,13 @@ public class PointI extends Point<Integer> {
             add(new PointI(x - 1, y + 1)); // sw
         }};
         return neighbors.toArray(PointI[]::new);
+    }
+
+    public PointI bound(int minX, int minY, int maxX, int maxY) {
+        int newX = Math.max(minX, getX());
+        int newY = Math.max(minY, getY());
+        newX = Math.min(newX, maxX - 1);
+        newY = Math.min(newY, maxY - 1);
+        return new PointI(newX, newY);
     }
 }

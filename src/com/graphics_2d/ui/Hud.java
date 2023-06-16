@@ -11,7 +11,7 @@ import java.awt.image.BufferedImage;
 public class Hud {
 
     static int HEIGHT = 100;
-    static int WIDTH = 800;
+    static int WIDTH = 1000;
 
     private final BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
     private final Player player;
@@ -24,12 +24,18 @@ public class Hud {
 
     public void update() {
         Graphics2D g2d = image.createGraphics();
-        g2d.setColor(Color.RED);
-        g2d.fillRect(0, 0, WIDTH, HEIGHT);
-        drawStatBar(g2d, 5, 5, "Health:", player.getHealth(), Const.MAX_HEALTH, Color.BLUE, Color.GREEN);
-        drawStatBar(g2d, 5, 35, "Hunger:", player.getHunger(), Const.MAX_HUNGER, new Color(150, 75, 0), Color.YELLOW);
-        drawStatBar(g2d, 5, 65, "Thirst:", player.getThirst(), Const.MAX_THIRST, Color.ORANGE, Color.CYAN);
-        drawStatBar(g2d, 155, 5, "Stamina:", player.getStamina(), Const.MAX_STAMINA, Color.CYAN, Color.PINK);
+        // g2d.setColor(Color.RED);
+        // g2d.fillRect(0, 0, WIDTH, HEIGHT);
+        int x = 5;
+        int y = 5;
+        drawStatBar(g2d, x, y, "Health:", player.getHealth(), Const.MAX_HEALTH, Color.BLUE, Color.GREEN);
+        y += 35;
+        drawStatBar(g2d, x, y, "Hunger:", player.getHunger(), Const.MAX_HUNGER, new Color(150, 75, 0), Color.YELLOW);
+        y += 35;
+        drawStatBar(g2d, x, y, "Thirst:", player.getThirst(), Const.MAX_THIRST, Color.ORANGE, Color.CYAN);
+        x += 155;
+        y = 5;
+        drawStatBar(g2d, x, y, "Stamina:", player.getStamina(), Const.MAX_STAMINA, Color.CYAN, Color.PINK);
         drawHotBar(g2d, 315, 5);
     }
 
@@ -47,22 +53,24 @@ public class Hud {
     }
 
     void drawHotBar(Graphics2D g2d, int x, int y) {
-        g2d.setColor(Color.darkGray);
-        g2d.fillRect(x, y, 400, 90);
-        g2d.setColor(Color.RED);
-
         for (int i = 0; i < Const.INVENTORY_WIDTH; i++) {
+            int ix = x + 5 + (66 * i);
+            int iy = y + 5;
             ObjectInstance obj = player.getInventoryAt(i, 0);
+            g2d.setColor(Color.darkGray);
+            g2d.fillRect(ix, iy, 64, 64);
+            g2d.setColor(Color.BLACK);
+            g2d.drawRect(ix, iy, 64, 64);
             if (obj != null) {
                 int count = obj.getCount();
                 GameObject gObj = GameObject.OBJECTS_BY_ID.get(obj.getObjectId());
                 int objImageIndex = gObj.getImageAsset(0).getId();
-                spriteSheet.drawTile(g2d, x + 5 + (66 * i), y + 5, 64, 64, objImageIndex);
-                g2d.drawString(String.valueOf(i + 1), x + 5 + (66 * i), y + 25);
-                g2d.drawString(String.valueOf(count), x + 5 + (66 * i), y + 65);
+                spriteSheet.drawTile(g2d, ix, iy, 64, 64, objImageIndex);
+                g2d.setColor(Color.RED);
+                g2d.drawString(String.valueOf(i + 1), ix, iy + 20);
+                g2d.drawString(String.valueOf(count), ix, iy + 60);
                 if (i == player.getBuildingIndex() - 1) {
-                    g2d.setColor(Color.RED);
-                    g2d.drawRect(x + (66 * i), y + 4, 65, 65);
+                    g2d.drawRect(ix, iy, 64, 64);
                 }
             }
         }
