@@ -15,7 +15,6 @@ public class CraftingMenu {
     private final World world;
 
     private final Player player;
-    private final SpriteSheet spriteSheet;
     private BufferedImage craftingBackground = null;
     private BufferedImage image = null;
     private boolean menuOpen = false;
@@ -24,10 +23,9 @@ public class CraftingMenu {
 
     private int selection = 0;
 
-    public CraftingMenu(World world, SpriteSheet spriteSheet) {
+    public CraftingMenu(World world) {
         this.world = world;
         this.player = world.getPlayer();
-        this.spriteSheet = spriteSheet;
     }
 
     public void update() {
@@ -48,15 +46,15 @@ public class CraftingMenu {
         int y = 115;
         int i = 0;
         for (Recipe recipe : Recipes.ALL_RECIPES) {
-            spriteSheet.drawTile(g2d, x, y + (i * 67), 64, 64,
-                    GameObject.OBJECTS_BY_ID.get(recipe.getOutputObjectId()).getImageAsset(0).getId());
+            SpriteSheets.OBJ_SPRITES.drawTile(g2d, x, y + (i * 67), 64, 64,
+                    GameObject.OBJECTS_BY_ID.get(recipe.getOutputObjectId()).getImageAsset(0));
             g2d.setColor(Color.BLUE);
             g2d.drawString(String.valueOf(recipe.getAmount()), x, y + (i * 67) + 30);
             int t = 0;
             boolean canMake = true;
             for (Map.Entry<Integer, Integer> entry : recipe.getRequiredObjects().entrySet()) {
-                spriteSheet.drawTile(g2d, x + 70 + (t * 67), y + (i * 67), 64, 64,
-                        GameObject.OBJECTS_BY_ID.get(entry.getKey()).getImageAsset(0).getId());
+                SpriteSheets.OBJ_SPRITES.drawTile(g2d, x + 70 + (t * 67), y + (i * 67), 64, 64,
+                        GameObject.OBJECTS_BY_ID.get(entry.getKey()).getImageAsset(0));
                 g2d.drawString(String.valueOf(entry.getValue()), x + 70 + (t * 67), y + (i * 67) + 30);
                 if (player.getObjectCount(entry.getKey()) < entry.getValue()) {
                     canMake = false;
@@ -64,11 +62,11 @@ public class CraftingMenu {
                 t++;
             }
             if (canMake) {
-                spriteSheet.drawTile(g2d, x + 70 + (t * 67), y + (i * 67), 64, 64,
-                        ImageAssets.CHECK.getId());
+                SpriteSheets.OBJ_SPRITES.drawTile(g2d, x + 70 + (t * 67), y + (i * 67), 64, 64,
+                        ImageAssets.CHECK);
             } else {
-                spriteSheet.drawTile(g2d, x + 70 + (t * 67), y + (i * 67), 64, 64,
-                        ImageAssets.X.getId());
+                SpriteSheets.OBJ_SPRITES.drawTile(g2d, x + 70 + (t * 67), y + (i * 67), 64, 64,
+                        ImageAssets.X);
             }
             if (i == selection) {
                 g2d.setColor(Color.RED);

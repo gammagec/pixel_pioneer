@@ -1,11 +1,15 @@
 package com.pixel_pioneer.ui;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
+import static java.lang.System.console;
 import static java.lang.System.exit;
 
 import com.pixel_pioneer.Const;
@@ -19,7 +23,6 @@ import com.pixel_pioneer.world.*;
 public class GameWindow extends JFrame implements WorldUpdateHandler {
 
     final private World world;
-    final private SpriteSheet spriteSheet;
     final private Hud hud;
     final private Inventory inventory;
 
@@ -31,11 +34,10 @@ public class GameWindow extends JFrame implements WorldUpdateHandler {
     final private CraftingMenu craftingMenu;
 
     public GameWindow(World world, Hud hud, Inventory inventory, KeyboardHandler keyboardHandler,
-                      SpriteSheet spriteSheet, MiniMap miniMap, CraftingMenu craftingMenu) {
+                      MiniMap miniMap, CraftingMenu craftingMenu) {
         super("Game Window");
         this.craftingMenu = craftingMenu;
         this.inventory = inventory;
-        this.spriteSheet = spriteSheet;
         this.world = world;
         this.hud = hud;
         this.player = world.getPlayer();
@@ -51,8 +53,22 @@ public class GameWindow extends JFrame implements WorldUpdateHandler {
         addKeyListener(keyboardHandler);
         world.setWorldUpdateHandler(this);
 
+        BufferedImage cornersMask;
+        File file = new File("images/all_corners.png");
+        try {
+            cornersMask = ImageIO.read(file);
+        } catch (IOException e) {
+            System.out.println("Error loading corners mask");
+            throw new RuntimeException(e);
+        }
+
         for(ImageAsset imageAsset : ImageAsset.ASSETS_BY_ID.values()) {
-            imageAsset.addToSpriteSheet(spriteSheet);
+            if (imageAsset.getType() == AssetType.TILE_ASSET) {
+                SpriteSheets.TILE_SPRITES.addImageAsset(imageAsset);
+                SpriteSheets.TILE_CORNER_SPRITES.addImageAsset(imageAsset, cornersMask);
+            } else {
+                SpriteSheets.OBJ_SPRITES.addImageAsset(imageAsset);
+            }
         }
         hud.update();
         inventory.update();
@@ -82,8 +98,8 @@ public class GameWindow extends JFrame implements WorldUpdateHandler {
         }
         Graphics2D g2d = backBuffer.createGraphics();
 
-        int tileHeight = 128;
-        int tileWidth = 128;
+        int tileHeight = Const.TILE_RENDER_SIZE;
+        int tileWidth = Const.TILE_RENDER_SIZE;
         int centerTileX = mapWidth / 2 - (tileWidth / 2);
         int centerTileY = mapHeight / 2 - (tileHeight / 2);
         int numX = Math.ceilDiv(mapWidth, tileWidth);
@@ -100,15 +116,43 @@ public class GameWindow extends JFrame implements WorldUpdateHandler {
                 // Draw the tile (red or black square), color[0] is black, color[1] is red
                 int tx = leftIndex + x;
                 int ty = topIndex + y;
-                if (tx >= 0 && tx < Const.WORLD_SIZE && ty >= 0 && ty < Const.WORLD_SIZE) {
-                    Tile tile = world.getTileAt(tx, ty);
-                    spriteSheet.drawTile(g2d, x * tileWidth + startX, y * tileHeight + startY,
-                            tileWidth, tileHeight, tile.getImageAsset().getId());
-                    ObjectInstance obj = world.getObjectAt(tx, ty);
+                PointI tLoc = new PointI(tx, ty);
+                if (tLoc.inBounds(0, 0, Const.WORLD_SIZE, Const.WORLD_SIZE)) {
+                    Tile tile = world.getTileAt(tLoc);
+                    SpriteSheets.TILE_SPRITES.drawTile(g2d, x * tileWidth + startX, y * tileHeight + startY,
+                            tileWidth, tileHeight, tile.getImageAsset());
+                    Tile north = world.getTileAt(tLoc.delta(0, -1));
+                    Tile northEast = world.getTileAt(tLoc.delta(1, -1));
+                    Tile east = world.getTileAt(tLoc.delta(1, 0));
+                    Tile southEast = world.getTileAt(tLoc.delta(1, 1));
+                    Tile south = world.getTileAt(tLoc.delta(0, 1));
+                    Tile southWest = world.getTileAt(tLoc.delta(-1, 1));
+                    Tile west = world.getTileAt(tLoc.delta(-1, 0));
+                    Tile northWest = world.getTileAt(tLoc.delta(-1, -1));
+                    // Maybe draw topRight corner
+//                    if (tile.getId() == Tiles.WATER.getId()) {
+//                        if (north != null && northEast != null && east != null && north.getId() == northEast.getId() && east.getId() == north.getId()) {
+//                            SpriteSheets.TILE_CORNER_SPRITES.drawTile(g2d, x * tileWidth + startX, y * tileHeight + startY,
+//                                    tileWidth, tileHeight, north.getImageAsset(), MaskCorner.TOP_RIGHT);
+//                        }
+//                        if (east != null && southEast != null && south != null && east.getId() == southEast.getId() && south.getId() == east.getId()) {
+//                            SpriteSheets.TILE_CORNER_SPRITES.drawTile(g2d, x * tileWidth + startX, y * tileHeight + startY,
+//                                    tileWidth, tileHeight, east.getImageAsset(), MaskCorner.BOTTOM_RIGHT);
+//                        }
+//                        if (south != null && southWest != null && west != null && south.getId() == southWest.getId() && west.getId() == south.getId()) {
+//                            SpriteSheets.TILE_CORNER_SPRITES.drawTile(g2d, x * tileWidth + startX, y * tileHeight + startY,
+//                                    tileWidth, tileHeight, south.getImageAsset(), MaskCorner.BOTTOM_LEFT);
+//                        }
+//                        if (west != null && northWest != null && north != null && west.getId() == northWest.getId() && north.getId() == west.getId()) {
+//                            SpriteSheets.TILE_CORNER_SPRITES.drawTile(g2d, x * tileWidth + startX, y * tileHeight + startY,
+//                                    tileWidth, tileHeight, west.getImageAsset(), MaskCorner.TOP_LEFT);
+//                        }
+//                    }
+                    ObjectInstance obj = world.getObjectAt(tLoc);
                     if (obj != null) {
                         GameObject gObj = GameObject.OBJECTS_BY_ID.get(obj.getObjectId());
-                        spriteSheet.drawTile(g2d, x * tileWidth + startX, y * tileHeight + startY,
-                                tileWidth, tileHeight, gObj.getImageAsset(obj.getUsesLeft()).getId());
+                        SpriteSheets.OBJ_SPRITES.drawTile(g2d, x * tileWidth + startX, y * tileHeight + startY,
+                                tileWidth, tileHeight, gObj.getImageAsset(obj.getUsesLeft()));
                     }
                 } else {
                     // Off the map
@@ -118,31 +162,31 @@ public class GameWindow extends JFrame implements WorldUpdateHandler {
                 MobInstance mobInst = world.getMobAt(tx, ty);
                 if (mobInst != null) {
                     Mob mob = Mob.MOBS_BY_ID.get(mobInst.getMobId());
-                    spriteSheet.drawTile(g2d, x * tileWidth + startX, y * tileHeight + startY,
-                            tileWidth, tileHeight, mob.getImageAsset().getId());
+                    SpriteSheets.OBJ_SPRITES.drawTile(g2d, x * tileWidth + startX, y * tileHeight + startY,
+                            tileWidth, tileHeight, mob.getImageAsset());
                 }
                 if (tx == loc.getX() && ty == loc.getY()) {
                     if (player.getHealth() > 0) {
-                        spriteSheet.drawTile(g2d, x * tileWidth + startX, y * tileHeight + startY,
+                        SpriteSheets.OBJ_SPRITES.drawTile(g2d, x * tileWidth + startX, y * tileHeight + startY,
                                 tileWidth, tileHeight,
-                                player.isFlying() ? ImageAssets.GUY_FLY.getId() : ImageAssets.GUY.getId()); // guy block
+                                player.isFlying() ? ImageAssets.GUY_FLY : ImageAssets.GUY); // guy block
                     } else {
-                        spriteSheet.drawTile(g2d, x * tileWidth + startX, y * tileHeight + startY,
-                                tileWidth, tileHeight, ImageAssets.DEAD.getId()); // dead guy block
+                        SpriteSheets.OBJ_SPRITES.drawTile(g2d, x * tileWidth + startX, y * tileHeight + startY,
+                                tileWidth, tileHeight, ImageAssets.DEAD); // dead guy block
                     }
                     if (player.getBuildingIndex() > 0) {
                         Integer bObj = player.getBuildingObjectIndex();
                         if (bObj != null) {
                             GameObject gObj = GameObject.OBJECTS_BY_ID.get(bObj);
                             System.out.println("Drawing object " + gObj.getName());
-                            spriteSheet.drawTile(g2d, x * tileWidth + startX, y * tileHeight + startY,
-                                    tileWidth / 2, tileHeight / 2, gObj.getImageAsset(0).getId());
+                            SpriteSheets.OBJ_SPRITES.drawTile(g2d, x * tileWidth + startX, y * tileHeight + startY,
+                                    tileWidth / 2, tileHeight / 2, gObj.getImageAsset(0));
                         }
                     }
-                    Tile tileAt = world.getTileAt(tx, ty);
+                    Tile tileAt = world.getTileAt(tLoc);
                     if (tileAt.isSwim()) {
-                        spriteSheet.drawTile(g2d, x * tileWidth + startX, y * tileHeight + startY,
-                                tileWidth, tileHeight, tileAt.getSwimAsset().getId()); //swim cover
+                        SpriteSheets.OBJ_SPRITES.drawTile(g2d, x * tileWidth + startX, y * tileHeight + startY,
+                                tileWidth, tileHeight, tileAt.getSwimAsset()); //swim cover
                     }
                 }
             }

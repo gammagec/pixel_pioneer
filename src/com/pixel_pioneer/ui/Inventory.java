@@ -16,7 +16,6 @@ public class Inventory {
 
     private final BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
     private final Player player;
-    private final SpriteSheet spriteSheet;
 
     private ObjectInstance selectedObject;
 
@@ -24,9 +23,8 @@ public class Inventory {
 
     private boolean open = false;
 
-    public Inventory(Player player, SpriteSheet spriteSheet) {
+    public Inventory(Player player) {
         this.player = player;
-        this.spriteSheet = spriteSheet;
     }
 
     public void toggleOpen() {
@@ -50,7 +48,7 @@ public class Inventory {
                 g2d.drawRect(tx, ty, 64, 64);
                 if (obj != null) {
                     GameObject gObj = GameObject.OBJECTS_BY_ID.get(obj.getObjectId());
-                    spriteSheet.drawTile(g2d, tx, ty, 64, 64, gObj.getImageAsset(0).getId());
+                    SpriteSheets.OBJ_SPRITES.drawTile(g2d, tx, ty, 64, 64, gObj.getImageAsset(0));
                     g2d.drawString(String.valueOf(obj.getCount()), tx, ty + 12);
                 }
                 if (ix == selection.getX() && iy == selection.getY()) {
@@ -58,7 +56,7 @@ public class Inventory {
                     g2d.drawRect(tx, ty, 64, 64);
                     if (selectedObject != null) {
                         GameObject gObj = GameObject.OBJECTS_BY_ID.get(selectedObject.getObjectId());
-                        spriteSheet.drawTile(g2d, tx, ty, 32, 32, gObj.getImageAsset(0).getId());
+                        SpriteSheets.OBJ_SPRITES.drawTile(g2d, tx, ty, 32, 32, gObj.getImageAsset(0));
                         g2d.drawString(String.valueOf(selectedObject.getCount()), tx, ty + 12);
                     }
                 }

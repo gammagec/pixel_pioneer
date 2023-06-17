@@ -43,7 +43,8 @@ public class MiniMap {
         int top = Const.WORLD_SIZE / 2;
         for (int x = 0; x < Const.WORLD_SIZE; x++) {
             for (int y = 0; y < Const.WORLD_SIZE; y++) {
-                Biome biome = world.getBiomeAt(x, y);
+                PointI loc = new PointI(x, y);
+                Biome biome = world.getBiomeAt(loc);
                 Color color = biome.getMapColor();
                 image.setRGB(left + x, top + y, color.getRGB());
             }

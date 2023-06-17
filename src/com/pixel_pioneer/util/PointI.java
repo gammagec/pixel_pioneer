@@ -35,4 +35,8 @@ public class PointI extends Point<Integer> {
         newY = Math.min(newY, maxY - 1);
         return new PointI(newX, newY);
     }
+
+    public boolean inBounds(int mx, int my, int width, int height) {
+        return getX() >= mx && getY() >= my && getX() < width && getY() < height;
+    }
 }

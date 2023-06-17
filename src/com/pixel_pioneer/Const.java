@@ -2,7 +2,9 @@ package com.pixel_pioneer;
 
 public class Const {
     public static int WORLD_SIZE = 512;
-    public static int TILE_SIZE = 32;
+    public static int TILE_SIZE = 64;
+
+    public static int TILE_RENDER_SIZE = 128;
 
     public static int MINI_MAP_SIZE = 256;
     public static int BIOME_SIZE = 32;

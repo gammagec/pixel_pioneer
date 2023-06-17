@@ -131,7 +131,7 @@ public class Actions {
     }
 
     private void useLoc(PointI loc, GameObject obj) {
-        ObjectInstance objUseOn = world.getObjectAt(loc.getX(), loc.getY());
+        ObjectInstance objUseOn = world.getObjectAt(loc);
         if (objUseOn != null) {
             GameObject gObjUseOn = GameObject.OBJECTS_BY_ID.get(objUseOn.getObjectId());
             for (UseEffect effect : gObjUseOn.getUseEffects()) {
@@ -159,7 +159,7 @@ public class Actions {
                 }
             }
         } else if (obj.isCanBuild()){
-            world.putObject(loc.getX(), loc.getY(), new ObjectInstance(obj.getId(), obj.getUses()));
+            world.putObject(loc, new ObjectInstance(obj.getId(), obj.getUses()));
             player.removeObject(obj.getId());
         } else {
             MobInstance mob = world.getMobAt(loc.getX(), loc.getY());
@@ -211,14 +211,14 @@ public class Actions {
         }
     }
 
-    private void maybePutObject(int x, int y) {
+    private void maybePutObject(PointI loc) {
         Player player = world.getPlayer();
-        if (world.getObjectAt(x, y) == null) {
+        if (world.getObjectAt(loc) == null) {
             Integer objIndex = player.getBuildingObjectIndex();
             GameObject gObj = GameObject.OBJECTS_BY_ID.get(objIndex);
             if (objIndex != null) {
                 player.removeObject(objIndex);
-                world.putObject(x, y, new ObjectInstance(objIndex, gObj.getUses()));
+                world.putObject(loc, new ObjectInstance(objIndex, gObj.getUses()));
             }
         }
         player.setBuildingIndex(0);
@@ -230,7 +230,7 @@ public class Actions {
         boolean needsHudUpdate = false;
         boolean needsInventoryUpdate = false;
         PointI loc = player.getLocation();
-        Tile tile = world.getTileAt(loc.getX(), loc.getY());
+        Tile tile = world.getTileAt(loc);
         int damage = 0;
         if (!player.isFlying()) {
             damage += tile.getDamage();
@@ -242,7 +242,7 @@ public class Actions {
             player.takeStamina(1);
             needsHudUpdate = true;
         }
-        ObjectInstance obj = world.getObjectAt(loc.getX(), loc.getY());
+        ObjectInstance obj = world.getObjectAt(loc);
         if (obj != null && !player.isFlying()) {
             GameObject gObj = GameObject.OBJECTS_BY_ID.get(obj.getObjectId());
             damage += gObj.getDamage();

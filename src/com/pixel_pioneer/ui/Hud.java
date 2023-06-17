@@ -1,6 +1,8 @@
 package com.pixel_pioneer.ui;
 
 import com.pixel_pioneer.Const;
+import com.pixel_pioneer.world.ImageAsset;
+import com.pixel_pioneer.world.ImageAssets;
 import com.pixel_pioneer.world.ObjectInstance;
 import com.pixel_pioneer.world.entities.Player;
 import com.pixel_pioneer.world.GameObject;
@@ -15,11 +17,9 @@ public class Hud {
 
     private final BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
     private final Player player;
-    private final SpriteSheet spriteSheet;
 
-    public Hud(Player player, SpriteSheet spriteSheet) {
+    public Hud(Player player) {
         this.player = player;
-        this.spriteSheet = spriteSheet;
     }
 
     public void update() {
@@ -64,8 +64,8 @@ public class Hud {
             if (obj != null) {
                 int count = obj.getCount();
                 GameObject gObj = GameObject.OBJECTS_BY_ID.get(obj.getObjectId());
-                int objImageIndex = gObj.getImageAsset(0).getId();
-                spriteSheet.drawTile(g2d, ix, iy, 64, 64, objImageIndex);
+                ImageAsset asset = gObj.getImageAsset(0);
+                SpriteSheets.OBJ_SPRITES.drawTile(g2d, ix, iy, 64, 64, asset);
                 g2d.setColor(Color.RED);
                 g2d.drawString(String.valueOf(i + 1), ix, iy + 20);
                 g2d.drawString(String.valueOf(count), ix, iy + 60);

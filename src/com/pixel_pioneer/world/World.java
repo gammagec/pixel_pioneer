@@ -56,7 +56,7 @@ public class World {
         PointI loc = mob.getLocation();
         ObjectInstance drop = Mob.MOBS_BY_ID.get(mob.getMobId()).getDrop();
         if (drop != null) {
-            putObject(loc.getX(), loc.getY(), drop);
+            putObject(loc, drop);
         }
     }
 
@@ -83,22 +83,21 @@ public class World {
 
     public PointI randomSpawnPoint(Set<Integer> biomes, boolean includeSwim) {
         while(true) {
-            int x = random.nextInt(Const.WORLD_SIZE);
-            int y = random.nextInt(Const.WORLD_SIZE);
-            Tile tile = getTileAt(x, y);
-            ObjectInstance obj = getObjectAt(x, y);
+            PointI loc = new PointI(random.nextInt(Const.WORLD_SIZE), random.nextInt(Const.WORLD_SIZE));
+            Tile tile = getTileAt(loc);
+            ObjectInstance obj = getObjectAt(loc);
             boolean objBlocking = false;
             if (obj != null) {
                 GameObject gObj = GameObject.OBJECTS_BY_ID.get(obj.getObjectId());
                 objBlocking = gObj.isBlocking();
             }
-            Integer biome = getBiomeAt(x, y).getBiomeId();
+            Integer biome = getBiomeAt(loc).getBiomeId();
             if ((includeSwim || !tile.isSwim()) &&
                     !tile.isBlocking() &&
                     tile.getDamage() == 0 &&
                     !objBlocking &&
                     biomes.contains(biome)) {
-                return new PointI(x, y);
+                return loc;
             }
         }
     }
@@ -127,21 +126,25 @@ public class World {
         }
     }
 
-    public Tile getTileAt(int x, int y) {
-        return Tiles.TILES_BY_ID.get(locations[y][x].getTileId());
+    public Tile getTileAt(PointI loc) {
+        if (inBounds(loc)) {
+            return Tiles.TILES_BY_ID.get(locations[loc.getY()][loc.getX()].getTileId());
+        } else {
+            return null;
+        }
     }
 
-    public Biome getBiomeAt(int x, int y) {
-        if (inBounds(x, y)) {
-            int biomeId = locations[y][x].getBiomeId();
+    public Biome getBiomeAt(PointI loc) {
+        if (inBounds(loc)) {
+            int biomeId = locations[loc.getY()][loc.getX()].getBiomeId();
             return Biomes.BIOMES_BY_ID.get(biomeId);
         }
         return null;
     }
 
-    public ObjectInstance getObjectAt(int x, int y) {
-        if (inBounds(x, y)) {
-            return locations[y][x].getObjectInstance();
+    public ObjectInstance getObjectAt(PointI loc) {
+        if (inBounds(loc)) {
+            return locations[loc.getY()][loc.getX()].getObjectInstance();
         } else {
             return null;
         }
@@ -180,21 +183,21 @@ public class World {
             switch (facing) {
                 case 0 -> { // east
                     for (int i = 0; i < width; i++) {
-                        if (inBounds(x, y + i)) {
+                        if (inBounds(new PointI(x, y + i))) {
                             locations[y + i][x].setBiomeId(Biomes.WATER.getBiomeId());
                         }
                     }
                 }
                 case 1, 3 -> { // south, north
                     for (int i = 0; i < width; i++) {
-                        if (inBounds(x - i, y)) {
+                        if (inBounds(new PointI(x - i, y))) {
                             locations[y][x - i].setBiomeId(Biomes.WATER.getBiomeId());
                         }
                     }
                 }
                 case 2 -> { // west
                     for (int i = 0; i < width; i++) {
-                        if (inBounds(x, y - i)) {
+                        if (inBounds(new PointI(x, y - i))) {
                             locations[y - i][x].setBiomeId(Biomes.WATER.getBiomeId());
                         }
                     }
@@ -219,8 +222,8 @@ public class World {
         }
     }
 
-    public boolean inBounds(int x, int y) {
-        return !(x < 0 || y < 0 || x > Const.WORLD_SIZE - 1 || y > Const.WORLD_SIZE - 1);
+    public boolean inBounds(PointI loc) {
+        return loc.inBounds(0, 0, Const.WORLD_SIZE, Const.WORLD_SIZE);
     }
 
     public boolean getBlocking(int x, int y) {
@@ -247,10 +250,10 @@ public class World {
         }
     }
 
-    public void putObject(int x, int y, ObjectInstance obj) {
-        ObjectInstance existingObj = locations[y][x].getObjectInstance();
+    public void putObject(PointI loc, ObjectInstance obj) {
+        ObjectInstance existingObj = locations[loc.getY()][loc.getX()].getObjectInstance();
         if (existingObj == null) {
-            locations[y][x].setObjectInstance(obj);
+            locations[loc.getY()][loc.getX()].setObjectInstance(obj);
         }
     }
 }

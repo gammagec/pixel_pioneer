@@ -21,8 +21,11 @@ public class ImageAsset {
 
     public static Map<Integer, ImageAsset> ASSETS_BY_ID = new HashMap<>();
 
-    public ImageAsset(String fileName) {
+    private final AssetType type;
+
+    public ImageAsset(String fileName, AssetType type) {
         this.fileName = fileName;
+        this.type = type;
         this.id = nextId++;
         ASSETS_BY_ID.put(this.id, this);
     }
@@ -30,6 +33,13 @@ public class ImageAsset {
     public void initialize() throws IOException {
         File file = new File(fileName);
         img = ImageIO.read(file);
+        if (img.getWidth() != Const.TILE_SIZE || img.getHeight() != Const.TILE_SIZE) {
+            Image img2 = img.getScaledInstance(Const.TILE_SIZE, Const.TILE_SIZE, Image.SCALE_AREA_AVERAGING);
+            img = new BufferedImage(Const.TILE_SIZE, Const.TILE_SIZE, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2d = img.createGraphics();
+            g2d.drawImage(img2, 0, 0, null);
+            g2d.dispose();
+        }
     }
 
     public String getFileName() {
@@ -40,20 +50,16 @@ public class ImageAsset {
         return this.id;
     }
 
-    public void addToSpriteSheet(SpriteSheet spriteSheet) {
-        for (int x = 0; x < Const.TILE_SIZE; x++) {
-            for (int y = 0; y < Const.TILE_SIZE; y++) {
-                spriteSheet.setBlockRGB(id, x, y, getPixelColor(x, y));
-            }
-        }
-    }
-
-    private Color getPixelColor(int x, int y) {
+    public Color getPixelColor(int x, int y) {
         int RGBA = img.getRGB(x, y);
         int alpha = (RGBA >> 24) & 255;
         int red = (RGBA >> 16) & 255;
         int green = (RGBA >> 8) & 255;
         int blue = RGBA & 255;
         return new Color(red, green, blue, alpha);
+    }
+
+    public AssetType getType() {
+        return type;
     }
 }

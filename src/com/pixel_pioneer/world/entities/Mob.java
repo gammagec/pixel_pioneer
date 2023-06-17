@@ -117,14 +117,14 @@ public class Mob {
                 case 3 -> dst = mLoc.delta(0, -1); // up
             }
         }
-        if (!world.inBounds(dst.getX(), dst.getY())) {
+        if (!world.inBounds(dst)) {
             return;
         }
-        Biome b = world.getBiomeAt(dst.getX(), dst.getY());
+        Biome b = world.getBiomeAt(dst);
         if (!biomes.contains(b.getBiomeId())) {
             return;
         }
-        Tile tile = world.getTileAt(dst.getX(), dst.getY());
+        Tile tile = world.getTileAt(dst);
         if (tile.isSwim() && !isCanSwim()) {
             return;
         }
