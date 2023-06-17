@@ -6,7 +6,7 @@ import static java.lang.System.exit;
 
 public class ImageAssets {
 
-    public static ImageAsset GUY = new ImageAsset("images/guy.png");
+    public static ImageAsset GUY = new ImageAsset("images/guy2.png");
     public static ImageAsset DEAD = new ImageAsset("images/dead.png");
     public static ImageAsset STONE = new ImageAsset("images/stone.png");
     public static ImageAsset GRASS = new ImageAsset("images/grass.png");

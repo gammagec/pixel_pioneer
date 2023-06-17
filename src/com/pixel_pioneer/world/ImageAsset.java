@@ -1,5 +1,6 @@
 package com.pixel_pioneer.world;
 
+import com.pixel_pioneer.Const;
 import com.pixel_pioneer.ui.SpriteSheet;
 
 import javax.imageio.ImageIO;
@@ -40,8 +41,8 @@ public class ImageAsset {
     }
 
     public void addToSpriteSheet(SpriteSheet spriteSheet) {
-        for (int x = 0; x < 32; x++) {
-            for (int y = 0; y < 32; y++) {
+        for (int x = 0; x < Const.TILE_SIZE; x++) {
+            for (int y = 0; y < Const.TILE_SIZE; y++) {
                 spriteSheet.setBlockRGB(id, x, y, getPixelColor(x, y));
             }
         }
