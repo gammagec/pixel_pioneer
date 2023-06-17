@@ -4,9 +4,11 @@ import com.graphics_2d.Const;
 import com.graphics_2d.util.PointI;
 import com.graphics_2d.world.biomes.*;
 import com.graphics_2d.world.entities.Mob;
+import com.graphics_2d.world.entities.MobInstance;
 import com.graphics_2d.world.entities.Player;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class World {
     private final Player player = new Player();
@@ -14,7 +16,7 @@ public class World {
 
     private final LocationInfo[][] locations = new LocationInfo[Const.WORLD_SIZE][Const.WORLD_SIZE];
 
-    private final List<Mob> mobs = new ArrayList<>();
+    private final List<MobInstance> mobs = new ArrayList<>();
     private final Random random = new Random();
 
     // private final BiomeGenerator biomeGenerator = new OriginalBiomeGenerator();
@@ -35,12 +37,12 @@ public class World {
         player.reset(this);
     }
 
-    public void addMob(Mob mob) {
+    public void addMob(MobInstance mob) {
         this.mobs.add(mob);
     }
 
-    public Mob getMobAt(int x, int y) {
-        for (Mob mob : mobs) {
+    public MobInstance getMobAt(int x, int y) {
+        for (MobInstance mob : mobs) {
             PointI p = mob.getLocation();
             if (p.getX() == x && p.getY() == y) {
                 return mob;
@@ -49,10 +51,13 @@ public class World {
         return null;
     }
 
-    public void killMob(Mob mob) {
+    public void killMob(MobInstance mob) {
         mobs.remove(mob);
         PointI loc = mob.getLocation();
-        putObject(loc.getX(), loc.getY(), mob.getMobDrop());
+        ObjectInstance drop = Mob.MOBS_BY_ID.get(mob.getMobId()).getDrop();
+        if (drop != null) {
+            putObject(loc.getX(), loc.getY(), drop);
+        }
     }
 
     public Player getPlayer() {
@@ -73,11 +78,10 @@ public class World {
 
     public PointI randomSpawnPoint() {
         return randomSpawnPoint(
-                Arrays.stream(Biomes.ALL_BIOMES).map(Biome::getBiomeId).toArray(Integer[]::new), false);
+                Arrays.stream(Biomes.ALL_BIOMES).map(Biome::getBiomeId).collect(Collectors.toSet()), false);
     }
 
-    public PointI randomSpawnPoint(Integer[] biomes, boolean includeSwim) {
-        Set<Integer> biomesSet = Set.of(biomes);
+    public PointI randomSpawnPoint(Set<Integer> biomes, boolean includeSwim) {
         while(true) {
             int x = random.nextInt(Const.WORLD_SIZE);
             int y = random.nextInt(Const.WORLD_SIZE);
@@ -93,13 +97,13 @@ public class World {
                     !tile.isBlocking() &&
                     tile.getDamage() == 0 &&
                     !objBlocking &&
-                    biomesSet.contains(biome)) {
+                    biomes.contains(biome)) {
                 return new PointI(x, y);
             }
         }
     }
 
-    public List<Mob> getMobs() {
+    public List<MobInstance> getMobs() {
         return mobs;
     }
 

@@ -23,7 +23,7 @@ public class GameObject {
     public static final Map<Integer, GameObject> OBJECTS_BY_ID = new HashMap<>();
 
     private final List<UseEffect> useEffects = new ArrayList<>();
-    private Map<Integer, ImageAsset> assetsAtUse = new HashMap<>();
+    private final Map<Integer, ImageAsset> assetsAtUse = new HashMap<>();
 
     public GameObject(String name, ImageAsset imageAsset) {
         this.imageAsset = imageAsset;

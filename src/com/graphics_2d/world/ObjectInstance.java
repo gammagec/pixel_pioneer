@@ -2,12 +2,18 @@ package com.graphics_2d.world;
 
 public class ObjectInstance {
     private final int objectId;
-    private int usesLeft = 0;
+    private int usesLeft;
     private int count = 1;
 
     public ObjectInstance(int objectId, int uses) {
         this.objectId = objectId;
         this.usesLeft = uses;
+    }
+
+    public ObjectInstance newCopy() {
+        ObjectInstance obj = new ObjectInstance(objectId, usesLeft);
+        obj.setCount(count);
+        return obj;
     }
 
     public int getObjectId() {
@@ -28,6 +34,10 @@ public class ObjectInstance {
 
     public int getCount() {
         return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
     }
 
     public void addInstances(int count) {

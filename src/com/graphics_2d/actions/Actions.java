@@ -10,7 +10,7 @@ import com.graphics_2d.ui.MiniMap;
 import com.graphics_2d.util.Direction;
 import com.graphics_2d.util.PointI;
 import com.graphics_2d.world.*;
-import com.graphics_2d.world.entities.Mob;
+import com.graphics_2d.world.entities.MobInstance;
 import com.graphics_2d.world.entities.Player;
 
 import java.util.Map;
@@ -166,7 +166,7 @@ public class Actions {
             world.putObject(loc.getX(), loc.getY(), new ObjectInstance(obj.getId(), obj.getUses()));
             player.removeObject(obj.getId());
         } else {
-            Mob mob = world.getMobAt(loc.getX(), loc.getY());
+            MobInstance mob = world.getMobAt(loc.getX(), loc.getY());
             if (mob != null) {
                 world.killMob(mob);
             }

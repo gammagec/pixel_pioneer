@@ -1,17 +1,14 @@
 package com.graphics_2d.ai;
 
-import com.graphics_2d.util.PointI;
-import com.graphics_2d.world.ImageAssets;
 import com.graphics_2d.world.World;
 import com.graphics_2d.world.entities.Mob;
-import com.graphics_2d.world.entities.MobType;
+import com.graphics_2d.world.entities.MobInstance;
+import com.graphics_2d.world.entities.Mobs;
 
-import java.util.Random;
 
 public class AiEngine {
 
     private final World world;
-    private final Random random = new Random();
 
     private boolean paused = false;
 
@@ -20,18 +17,19 @@ public class AiEngine {
     }
 
     public void populateMobs() {
+        Mobs.initialize();
         for (int i = 0; i < 2000; i++) {
-            MobType type = MobType.values()[random.nextInt(MobType.values().length)];
-            Mob mob = new Mob(world, type);
-            mob.setLocation(world.randomSpawnPoint(Mob.getBiomesForMob(type), mob.isCanSwim()));
-            world.addMob(mob);
+            Mob mob = Mob.getRandomMob();
+            MobInstance mobInst = new MobInstance(mob.getId(), world.randomSpawnPoint(mob.getBiomes(), mob.isCanSwim()));
+            world.addMob(mobInst);
         }
     }
 
     public void updateMobs() {
         if (!paused) {
-            for (Mob mob : world.getMobs()) {
-                mob.update();
+            for (MobInstance mobInst : world.getMobs()) {
+                Mob mob = Mob.MOBS_BY_ID.get(mobInst.getMobId());
+                mob.update(world, mobInst);
             }
             world.worldUpdated();
         }

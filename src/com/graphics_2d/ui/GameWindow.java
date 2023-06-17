@@ -12,6 +12,7 @@ import com.graphics_2d.Const;
 import com.graphics_2d.actions.KeyboardHandler;
 import com.graphics_2d.util.PointI;
 import com.graphics_2d.world.entities.Mob;
+import com.graphics_2d.world.entities.MobInstance;
 import com.graphics_2d.world.entities.Player;
 import com.graphics_2d.world.*;
 
@@ -114,8 +115,9 @@ public class GameWindow extends JFrame implements WorldUpdateHandler {
                     g2d.setColor(new Color(255, 255, 255));
                     g2d.fillRect(x * tileWidth + startX, y * tileHeight + startY, tileWidth, tileHeight);
                 }
-                Mob mob = world.getMobAt(tx, ty);
-                if (mob != null) {
+                MobInstance mobInst = world.getMobAt(tx, ty);
+                if (mobInst != null) {
+                    Mob mob = Mob.MOBS_BY_ID.get(mobInst.getMobId());
                     spriteSheet.drawTile(g2d, x * tileWidth + startX, y * tileHeight + startY,
                             tileWidth, tileHeight, mob.getImageAsset().getId());
                 }
