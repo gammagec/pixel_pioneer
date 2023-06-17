@@ -134,7 +134,6 @@ public class Actions {
         ObjectInstance objUseOn = world.getObjectAt(loc.getX(), loc.getY());
         if (objUseOn != null) {
             GameObject gObjUseOn = GameObject.OBJECTS_BY_ID.get(objUseOn.getObjectId());
-            System.out.println("Attempting to use " + obj.getName() + " on " + gObjUseOn.getName());
             for (UseEffect effect : gObjUseOn.getUseEffects()) {
                 if (effect.isTriggerObject(obj.getId())) {
                     int uses = objUseOn.getUsesLeft();
@@ -142,12 +141,9 @@ public class Actions {
                         return;
                     }
                     uses -= effect.getUsesConsumed();
-                    System.out.println("uses left " + uses);
                     if (uses == 0) {
-                        System.out.println("remove");
                         world.removeObject(loc.getX(), loc.getY());
                     } else {
-                        System.out.println("minus use");
                         objUseOn.setUses(uses);
                     }
                     for (Map.Entry<Integer, Integer> entry : effect.use().entrySet()) {

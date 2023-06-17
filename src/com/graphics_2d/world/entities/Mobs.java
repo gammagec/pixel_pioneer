@@ -22,7 +22,13 @@ public class Mobs {
     public static final Mob COW = new Mob("cow", new HashSet<>() {{
         add(Biomes.PLAINS.getBiomeId());
     }}, 0, ImageAssets.COW) {{
-        setDrop(new ObjectInstance(GameObjects.BEEF.getId(), GameObjects.BEEF.getUses()));
+        setDrop(new ObjectInstance(GameObjects.RAW_BEEF.getId(), GameObjects.RAW_BEEF.getUses()));
+    }};
+
+    public static final Mob CHICKEN = new Mob("chicken", new HashSet<>() {{
+        add(Biomes.PLAINS.getBiomeId());
+    }}, 0, ImageAssets.CHICKEN) {{
+        setDrop(new ObjectInstance(GameObjects.RAW_CHICKEN.getId(), GameObjects.RAW_CHICKEN.getUses()));
     }};
 
     public static final Mob LAVA_MONSTER = new Mob("lava monster", new HashSet<>() {{

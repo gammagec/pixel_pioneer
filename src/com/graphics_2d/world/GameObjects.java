@@ -141,4 +141,21 @@ public class GameObjects {
             put(GameObjects.SANDSTONE.getId(), 2);
         }}, 1));
     }};
+
+    public static GameObject RAW_BEEF = new GameObject("raw beef", ImageAssets.RAW_BEEF) {{
+        setCanPickup(true);
+        setCanEat(true);
+    }};
+
+    public static GameObject RAW_CHICKEN = new GameObject("raw chicken", ImageAssets.RAW_CHICKEN) {{
+        setCanPickup(true);
+        setCanEat(true);
+    }};
+
+    public static GameObject CAMPFIRE = new GameObject("campfire", ImageAssets.CAMP_FIRE) {{
+        setCanBuild(true);
+        setCanUse(true);
+        setBlocking(false);
+        setDamage(1);
+    }};
 }

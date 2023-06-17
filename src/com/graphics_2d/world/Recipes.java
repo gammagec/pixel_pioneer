@@ -26,8 +26,13 @@ public class Recipes {
         put(GameObjects.SANDSTONE.getId(), 4);
     }}, GameObjects.SANDSTONE_WALL.getId(), 1);
 
+    public static final Recipe CAMPFIRE = new Recipe(new HashMap<>() {{
+        put(GameObjects.TWIG.getId(), 3);
+        put(GameObjects.ROCK.getId(), 1);
+    }}, GameObjects.CAMPFIRE.getId(), 1);
+
     public static final Recipe[] ALL_RECIPES = {
             BASIC_AXE,BASIC_PICKAXE, BRICK, BASIC_SWORD,
-            SANDSTONE_WALL
+            SANDSTONE_WALL, CAMPFIRE
     };
 }
