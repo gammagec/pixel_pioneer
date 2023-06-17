@@ -1,0 +1,11 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="graphics_2d:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/graphics_2d_jar</output-path>
+    <root id="archive" name="graphics_2d.jar">
+      <element id="module-output" name="graphics_2d" />
+      <element id="directory" name="images">
+        <element id="dir-copy" path="$PROJECT_DIR$/images" />
+      </element>
+    </root>
+  </artifact>
+</component>
