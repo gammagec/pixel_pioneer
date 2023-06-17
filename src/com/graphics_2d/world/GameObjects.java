@@ -113,4 +113,32 @@ public class GameObjects {
         setUseOnWalk(BERRY.getId(), 1, 1);
         setAssetAtUse(0, ImageAssets.BERRY_BUSH_0);
     }};
+
+    public static GameObject SANDSTONE = new GameObject("sandstone", ImageAssets.SANDSTONE) {{
+        setCanPickup(true);
+    }};
+
+    public static GameObject SANDSTONE_WALL = new GameObject("sandstone wall", ImageAssets.SANDSTONE_WALL) {{
+        setCanBuild(true);
+        setCanUse(true);
+        setBlocking(true);
+        setUses(1);
+        addUseEffect(new UseEffect(new HashSet<>() {{
+            add(GameObjects.BASIC_PICK_AXE.getId());
+        }}, new HashMap<>() {{
+            put(GameObjects.SELF.getId(), 1);
+        }}, 1));
+    }};
+
+    public static GameObject SAND_BOULDER = new GameObject("sand boulder", ImageAssets.SAND_BOULDER) {{
+        setUses(3);
+        setAssetAtUse(2, ImageAssets.SAND_BOULDER_2);
+        setAssetAtUse(1, ImageAssets.SAND_BOULDER_1);
+        setBlocking(true);
+        addUseEffect(new UseEffect(new HashSet<>() {{
+            add(GameObjects.BASIC_PICK_AXE.getId());
+        }}, new HashMap<>() {{
+            put(GameObjects.SANDSTONE.getId(), 2);
+        }}, 1));
+    }};
 }

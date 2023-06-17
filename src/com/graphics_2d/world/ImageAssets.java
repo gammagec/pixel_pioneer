@@ -66,6 +66,9 @@ public class ImageAssets {
     public static ImageAsset RAW_CHICKEN = new ImageAsset("images/Raw_Chicken.png");
     public static ImageAsset RAW_PORK = new ImageAsset("images/Raw_Pork.png");
     public static ImageAsset SAND_BOULDER = new ImageAsset("images/Sand_Boulder.png");
+    public static ImageAsset SAND_BOULDER_2 = new ImageAsset("images/sand_boulder_2.png");
+    public static ImageAsset SAND_BOULDER_1 = new ImageAsset("images/sand_boulder_1.png");
+    public static ImageAsset SANDSTONE = new ImageAsset("images/sandstone.png");
     public static ImageAsset SANDSTONE_WALL = new ImageAsset("images/Sandstone_Wall.png");
     public static ImageAsset SUGARCANE = new ImageAsset("images/Sugarcane.png");
 

@@ -135,8 +135,14 @@ public class GameObject {
     }
 
     public void walkOnUse(Player player, ObjectInstance objectInstance) {
-        objectInstance.setUses(objectInstance.getUsesLeft() - 1);
+        objectInstance.setUses(objectInstance.getUsesLeft() - useOnWalkConsumes);
         GameObject gObj = GameObject.OBJECTS_BY_ID.get(useOnWalkObjectId);
-        player.giveObject(new ObjectInstance(useOnWalkObjectId, gObj.getUses()));
+        ObjectInstance giveObj = new ObjectInstance(useOnWalkObjectId, gObj.getUses());
+        giveObj.setCount(useOnWalkGiveAmount);
+        player.giveObject(giveObj);
+    }
+
+    public int getWalkOnUseConsume() {
+        return useOnWalkConsumes;
     }
 }

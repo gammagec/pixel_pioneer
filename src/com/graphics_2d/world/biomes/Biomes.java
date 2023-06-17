@@ -50,6 +50,7 @@ public class Biomes {
         put(Tiles.SAND, 1);
     }}, new HashMap<>() {{
         put(GameObjects.NO_OBJECT, 1869);
+        put(GameObjects.SAND_BOULDER, 100);
         put(GameObjects.CACTUS, 100);
     }}, new Color(255, 255, 0));
     public static Biome SNOW = new Biome("snow biome", new HashMap<>() {{

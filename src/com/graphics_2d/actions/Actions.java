@@ -153,7 +153,7 @@ public class Actions {
                     for (Map.Entry<Integer, Integer> entry : effect.use().entrySet()) {
                         for (int i = 0; i < entry.getValue(); i++) {
                             if (entry.getKey() == GameObjects.SELF.getId()) {
-                                player.giveObject(new ObjectInstance(obj.getId(), obj.getUses()));
+                                player.giveObject(new ObjectInstance(gObjUseOn.getId(), obj.getUses()));
                             } else {
                                 player.giveObject(new ObjectInstance(entry.getKey(), obj.getUses()));
                             }
@@ -255,7 +255,7 @@ public class Actions {
                 needsInventoryUpdate = true;
                 needsHudUpdate = true;
             } else if (gObj.isUseOnWalk()) {
-                if (obj.getUsesLeft() > 0) {
+                if (obj.getUsesLeft() >= gObj.getWalkOnUseConsume()) {
                     gObj.walkOnUse(player, obj);
                     needsInventoryUpdate = true;
                     needsHudUpdate = true;
