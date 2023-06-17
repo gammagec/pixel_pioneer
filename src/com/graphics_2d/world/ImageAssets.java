@@ -50,6 +50,24 @@ public class ImageAssets {
     public static ImageAsset COW = new ImageAsset("images/cow.png");
     public static ImageAsset BRICK = new ImageAsset("images/brick.png");
     public static ImageAsset BASIC_SWORD = new ImageAsset("images/sword.png");
+    public static ImageAsset BERRY = new ImageAsset("images/Berry.png");
+    public static ImageAsset BERRY_BUSH = new ImageAsset("images/Berry_Bush.png");
+    public static ImageAsset BERRY_BUSH_0 = new ImageAsset("images/berry_bush_no_berries.png");
+    public static ImageAsset CAMP_FIRE = new ImageAsset("images/Campfire.png");
+    public static ImageAsset CHEST = new ImageAsset("images/Chest.png");
+    public static ImageAsset CHICKEN = new ImageAsset("images/Chicken_.png");
+    public static ImageAsset DOOR = new ImageAsset("images/Door.png");
+    public static ImageAsset EGG = new ImageAsset("images/Egg.png");
+    public static ImageAsset FARM_LAND = new ImageAsset("images/Farm_land.png");
+    public static ImageAsset FEATHER = new ImageAsset("images/Feather.png");
+    public static ImageAsset HOE = new ImageAsset("images/Hoe.png");
+    public static ImageAsset PLANKS = new ImageAsset("images/Planks.png");
+    public static ImageAsset RAW_BEEF = new ImageAsset("images/Raw_Beef.png");
+    public static ImageAsset RAW_CHICKEN = new ImageAsset("images/Raw_Chicken.png");
+    public static ImageAsset RAW_PORK = new ImageAsset("images/Raw_Pork.png");
+    public static ImageAsset SAND_BOULDER = new ImageAsset("images/Sand_Boulder.png");
+    public static ImageAsset SANDSTONE_WALL = new ImageAsset("images/Sandstone_Wall.png");
+    public static ImageAsset SUGARCANE = new ImageAsset("images/Sugarcane.png");
 
     public static void initialize() {
         for (ImageAsset imageAsset : ImageAsset.ASSETS_BY_ID.values()) {

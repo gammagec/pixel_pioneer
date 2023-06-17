@@ -102,4 +102,15 @@ public class GameObjects {
             put(GameObjects.SELF.getId(), 1);
         }}, 1));
     }};
+
+    public static GameObject BERRY = new GameObject("berry", ImageAssets.BERRY) {{
+        setCanPickup(true);
+        setCanEat(true);
+    }};
+
+    public static GameObject BERRY_BUSH = new GameObject("berry bush", ImageAssets.BERRY_BUSH) {{
+        setUses(1);
+        setUseOnWalk(BERRY.getId(), 1, 1);
+        setAssetAtUse(0, ImageAssets.BERRY_BUSH_0);
+    }};
 }

@@ -19,6 +19,7 @@ public class Biomes {
         put(Tiles.STONE, 1);
     }}, new HashMap<>() {{
         put(GameObjects.NO_OBJECT, 1969);
+        put(GameObjects.BERRY_BUSH, 10);
         put(GameObjects.ROCK, 10);
         put(GameObjects.TWIG, 10);
     }}, Color.GREEN);
@@ -29,6 +30,7 @@ public class Biomes {
     }}, new HashMap<>() {{
         put(GameObjects.NO_OBJECT, 1469);
         put(GameObjects.TREE, 200);
+        put(GameObjects.BERRY_BUSH, 10);
         put(GameObjects.ROCK, 10);
         put(GameObjects.TWIG, 10);
     }}, new Color(0, 128, 0));

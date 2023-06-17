@@ -254,6 +254,12 @@ public class Actions {
                 world.pickupObject(loc.getX(), loc.getY());
                 needsInventoryUpdate = true;
                 needsHudUpdate = true;
+            } else if (gObj.isUseOnWalk()) {
+                if (obj.getUsesLeft() > 0) {
+                    gObj.walkOnUse(player, obj);
+                    needsInventoryUpdate = true;
+                    needsHudUpdate = true;
+                }
             }
         }
         if (damage > 0) {

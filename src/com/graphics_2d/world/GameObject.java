@@ -1,5 +1,7 @@
 package com.graphics_2d.world;
 
+import com.graphics_2d.world.entities.Player;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +26,10 @@ public class GameObject {
 
     private final List<UseEffect> useEffects = new ArrayList<>();
     private final Map<Integer, ImageAsset> assetsAtUse = new HashMap<>();
+    private boolean useOnWalk = false;
+    private int useOnWalkObjectId = 0;
+    private int useOnWalkConsumes = 0;
+    private int useOnWalkGiveAmount = 0;
 
     public GameObject(String name, ImageAsset imageAsset) {
         this.imageAsset = imageAsset;
@@ -31,6 +37,13 @@ public class GameObject {
         this.name = name;
         this.id = nextId++;
         OBJECTS_BY_ID.put(this.id, this);
+    }
+
+    public void setUseOnWalk(int objectId, int consumes, int giveAmount) {
+        useOnWalk = true;
+        useOnWalkObjectId = objectId;
+        useOnWalkConsumes = consumes;
+        useOnWalkGiveAmount = giveAmount;
     }
 
     public void setAssetAtUse(int use, ImageAsset asset) {
@@ -115,5 +128,15 @@ public class GameObject {
 
     public void setUses(int uses) {
         this.uses = uses;
+    }
+
+    public boolean isUseOnWalk() {
+        return useOnWalk;
+    }
+
+    public void walkOnUse(Player player, ObjectInstance objectInstance) {
+        objectInstance.setUses(objectInstance.getUsesLeft() - 1);
+        GameObject gObj = GameObject.OBJECTS_BY_ID.get(useOnWalkObjectId);
+        player.giveObject(new ObjectInstance(useOnWalkObjectId, gObj.getUses()));
     }
 }
