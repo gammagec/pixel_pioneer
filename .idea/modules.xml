@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/graphics_2d.iml" filepath="$PROJECT_DIR$/graphics_2d.iml" />
+      <module fileurl="file://$PROJECT_DIR$/pixel_pioneer.iml" filepath="$PROJECT_DIR$/pixel_pioneer.iml" />
     </modules>
   </component>
 </project>
