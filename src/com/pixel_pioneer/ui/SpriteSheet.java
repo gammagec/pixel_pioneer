@@ -5,12 +5,14 @@ import com.pixel_pioneer.world.ImageAsset;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.VolatileImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 public class SpriteSheet {
     private final BufferedImage bufferedImage;
@@ -94,6 +96,32 @@ public class SpriteSheet {
         return index;
     }
 
+    public BufferedImage rotateImageByDegrees(BufferedImage img, double angle) {
+        double rads = Math.toRadians(angle);
+        double sin = Math.abs(Math.sin(rads)), cos = Math.abs(Math.cos(rads));
+        int w = img.getWidth();
+        int h = img.getHeight();
+        int newWidth = (int) Math.floor(w * cos + h * sin);
+        int newHeight = (int) Math.floor(h * cos + w * sin);
+
+        BufferedImage rotated = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = rotated.createGraphics();
+        AffineTransform at = new AffineTransform();
+        at.translate((newWidth - w) / 2.0, (newHeight - h) / 2.0);
+
+        int x = w / 2;
+        int y = h / 2;
+
+        at.rotate(rads, x, y);
+        g2d.setTransform(at);
+        g2d.drawImage(img, 0, 0, null);
+        g2d.setColor(Color.RED);
+        g2d.drawRect(0, 0, newWidth - 1, newHeight - 1);
+        g2d.dispose();
+
+        return rotated;
+    }
+
     public void drawTile(Graphics2D g2d, int x, int y, int width, int height, ImageAsset imageAsset, ImageAsset leftTop, ImageAsset rightTop, ImageAsset leftBottom, ImageAsset rightBottom) {
         updateVolatile();
         Integer index = indexMap.get(imageAsset);
@@ -124,15 +152,30 @@ public class SpriteSheet {
                 // draw it!
                 cacheIndex = addCachedImage(imageAsset);
                 File cornerFile = new File("images/all_corners.png");
+                File cornerFile2 = new File("images/all_corners2.png");
                 BufferedImage mask;
+                BufferedImage mask2;
                 try {
                     mask = ImageIO.read(cornerFile);
+                    mask2 = ImageIO.read(cornerFile2);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
+                BufferedImage useMask = (new Random().nextInt(2) > 0) ? mask : mask2;
+//                int rot = new Random().nextInt(4);
+//                rot = switch (rot) {
+//                    case 1 -> 90;
+//                    case 2 -> 180;
+//                    case 3 -> 270;
+//                    default -> 0;
+//                };
+//                if (rot != 0) {
+//                    useMask = rotateImageByDegrees(useMask, rot);
+//                }
+
                 for (int tx = 0; tx < Const.TILE_SIZE; tx++) {
                     for (int ty = 0; ty < Const.TILE_SIZE; ty++) {
-                        int alpha = (mask.getRGB(tx, ty) >> 24) & 255;
+                        int alpha = (useMask.getRGB(tx, ty) >> 24) & 255;
                         if (alpha > 0) {
                             if (tx > Const.TILE_SIZE / 2) {
                                 if (ty > Const.TILE_SIZE / 2) {
