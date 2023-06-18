@@ -9,7 +9,9 @@ public class ImageAssets {
     public static ImageAsset GUY = new ImageAsset("images/guy3.png", AssetType.OBJECT_ASSET);
     public static ImageAsset DEAD = new ImageAsset("images/dead.png", AssetType.OBJECT_ASSET);
     public static ImageAsset STONE = new ImageAsset("images/stone2.png", AssetType.TILE_ASSET);
-    public static ImageAsset GRASS = new ImageAsset("images/grass2.png", AssetType.TILE_ASSET);
+    public static ImageAsset GRASS = new ImageAsset("images/grass3.png", AssetType.TILE_ASSET);
+    public static ImageAsset GRASS_V1 = new ImageAsset("images/grass3_v1.png", AssetType.TILE_ASSET);
+    public static ImageAsset GRASS_V2 = new ImageAsset("images/grass3_v2.png", AssetType.TILE_ASSET);
     public static ImageAsset FOREST_GRASS = new ImageAsset("images/forest_grass.png", AssetType.TILE_ASSET);
     public static ImageAsset WATER = new ImageAsset("images/Water.png", AssetType.TILE_ASSET);
     public static ImageAsset DIRT = new ImageAsset("images/Dirt.png", AssetType.TILE_ASSET);

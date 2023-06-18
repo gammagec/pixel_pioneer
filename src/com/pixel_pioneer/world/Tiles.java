@@ -9,7 +9,10 @@ public class Tiles {
         setSwimAsset(ImageAssets.IN_WATER);
     }};
     public static Tile STONE = new Tile("stone", ImageAssets.STONE);
-    public static Tile GRASS = new Tile("grass", ImageAssets.GRASS);
+    public static Tile GRASS = new Tile("grass", ImageAssets.GRASS) {{
+        addVariant(ImageAssets.GRASS_V1);
+        addVariant(ImageAssets.GRASS_V2);
+    }};
     public static Tile FOREST_GRASS = new Tile("forest grass", ImageAssets.FOREST_GRASS);
     public static Tile DIRT = new Tile("dirt", ImageAssets.DIRT);
     public static Tile LAVA = new Tile("lava", ImageAssets.LAVA) {{
