@@ -65,7 +65,6 @@ public class GameWindow extends JFrame implements WorldUpdateHandler {
         for(ImageAsset imageAsset : ImageAsset.ASSETS_BY_ID.values()) {
             if (imageAsset.getType() == AssetType.TILE_ASSET) {
                 SpriteSheets.TILE_SPRITES.addImageAsset(imageAsset);
-                SpriteSheets.TILE_CORNER_SPRITES.addImageAsset(imageAsset, cornersMask);
             } else {
                 SpriteSheets.OBJ_SPRITES.addImageAsset(imageAsset);
             }
@@ -119,8 +118,6 @@ public class GameWindow extends JFrame implements WorldUpdateHandler {
                 PointI tLoc = new PointI(tx, ty);
                 if (tLoc.inBounds(0, 0, Const.WORLD_SIZE, Const.WORLD_SIZE)) {
                     Tile tile = world.getTileAt(tLoc);
-                    SpriteSheets.TILE_SPRITES.drawTile(g2d, x * tileWidth + startX, y * tileHeight + startY,
-                            tileWidth, tileHeight, tile.getImageAsset());
                     Tile north = world.getTileAt(tLoc.delta(0, -1));
                     Tile northEast = world.getTileAt(tLoc.delta(1, -1));
                     Tile east = world.getTileAt(tLoc.delta(1, 0));
@@ -129,25 +126,27 @@ public class GameWindow extends JFrame implements WorldUpdateHandler {
                     Tile southWest = world.getTileAt(tLoc.delta(-1, 1));
                     Tile west = world.getTileAt(tLoc.delta(-1, 0));
                     Tile northWest = world.getTileAt(tLoc.delta(-1, -1));
-                    // Maybe draw topRight corner
-//                    if (tile.getId() == Tiles.WATER.getId()) {
-//                        if (north != null && northEast != null && east != null && north.getId() == northEast.getId() && east.getId() == north.getId()) {
-//                            SpriteSheets.TILE_CORNER_SPRITES.drawTile(g2d, x * tileWidth + startX, y * tileHeight + startY,
-//                                    tileWidth, tileHeight, north.getImageAsset(), MaskCorner.TOP_RIGHT);
-//                        }
-//                        if (east != null && southEast != null && south != null && east.getId() == southEast.getId() && south.getId() == east.getId()) {
-//                            SpriteSheets.TILE_CORNER_SPRITES.drawTile(g2d, x * tileWidth + startX, y * tileHeight + startY,
-//                                    tileWidth, tileHeight, east.getImageAsset(), MaskCorner.BOTTOM_RIGHT);
-//                        }
-//                        if (south != null && southWest != null && west != null && south.getId() == southWest.getId() && west.getId() == south.getId()) {
-//                            SpriteSheets.TILE_CORNER_SPRITES.drawTile(g2d, x * tileWidth + startX, y * tileHeight + startY,
-//                                    tileWidth, tileHeight, south.getImageAsset(), MaskCorner.BOTTOM_LEFT);
-//                        }
-//                        if (west != null && northWest != null && north != null && west.getId() == northWest.getId() && north.getId() == west.getId()) {
-//                            SpriteSheets.TILE_CORNER_SPRITES.drawTile(g2d, x * tileWidth + startX, y * tileHeight + startY,
-//                                    tileWidth, tileHeight, west.getImageAsset(), MaskCorner.TOP_LEFT);
-//                        }
-//                    }
+
+                    ImageAsset topLeft = null;
+                    ImageAsset topRight = null;
+                    ImageAsset bottomLeft = null;
+                    ImageAsset bottomRight = null;
+
+                    if (north != null && north.getId() != tile.getId() && northEast != null && east != null && north.getId() == northEast.getId() && east.getId() == north.getId()) {
+                        topRight = north.getImageAsset();
+                    }
+                    if (east != null && east.getId() != tile.getId() && southEast != null && south != null && east.getId() == southEast.getId() && south.getId() == east.getId()) {
+                        bottomRight = east.getImageAsset();
+                    }
+                    if (south != null && south.getId() != tile.getId() && southWest != null && west != null && south.getId() == southWest.getId() && west.getId() == south.getId()) {
+                        bottomLeft = south.getImageAsset();
+                    }
+                    if (west != null && west.getId() != tile.getId() && northWest != null && north != null && west.getId() == northWest.getId() && north.getId() == west.getId()) {
+                        topLeft = west.getImageAsset();
+                    }
+                    SpriteSheets.TILE_SPRITES.drawTile(g2d, x * tileWidth + startX, y * tileHeight + startY,
+                            tileWidth, tileHeight, tile.getImageAsset(), topLeft, topRight, bottomLeft, bottomRight);
+
                     ObjectInstance obj = world.getObjectAt(tLoc);
                     if (obj != null) {
                         GameObject gObj = GameObject.OBJECTS_BY_ID.get(obj.getObjectId());

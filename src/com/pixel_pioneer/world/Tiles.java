@@ -21,6 +21,7 @@ public class Tiles {
     public static Tile SNOW = new Tile("snow", ImageAssets.SNOW);
     public static Tile ICE = new Tile("ice", ImageAssets.ICE);
 
+    // 4096 combinations
     public static Tile[] ALL_TILES = new Tile[] {
             WATER,
             STONE,
