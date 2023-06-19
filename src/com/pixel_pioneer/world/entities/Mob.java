@@ -18,19 +18,26 @@ public class Mob {
 
     private static final Random RANDOM = new Random();
 
-    private ObjectInstance drop = null;
+    private final List<ObjectInstance> dropsByWeight = new ArrayList<>();
     private final int id;
     private static int nextId = 0;
 
     public static Map<Integer, Mob> MOBS_BY_ID = new HashMap<>();
 
-    public Mob(String name, Set<Integer> biomes, int visionRange, ImageAsset imageAsset) {
+    public Mob(String name, Set<Integer> biomes, int visionRange, ImageAsset imageAsset, Map<ObjectInstance, Integer> drops) {
         this.name = name;
         this.biomes = biomes;
         this.visionRange = visionRange;
         this.imageAsset = imageAsset;
         this.id = nextId++;
         MOBS_BY_ID.put(id, this);
+
+        for (ObjectInstance drop : drops.keySet().toArray(new ObjectInstance[0])) {
+            int weight = drops.get(drop);
+            for (int i = 0; i < weight; i++) {
+                dropsByWeight.add(drop);
+            }
+        }
     }
 
     public String getName() {
@@ -45,13 +52,12 @@ public class Mob {
         return id;
     }
 
-    public void setDrop(ObjectInstance objectInstance) {
-        this.drop = objectInstance;
-    }
-
     public ObjectInstance getDrop() {
-        if (drop != null) {
-            return drop.newCopy();
+        if (dropsByWeight.size() > 0) {
+            ObjectInstance drop = dropsByWeight.get(RANDOM.nextInt(dropsByWeight.size()));
+            if (drop != null) {
+                return drop.newCopy();
+            }
         }
         return null;
     }

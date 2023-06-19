@@ -39,6 +39,10 @@ public class GameObject {
         OBJECTS_BY_ID.put(this.id, this);
     }
 
+    public ObjectInstance getDefaultInstance() {
+        return new ObjectInstance(id, uses);
+    }
+
     public void setUseOnWalk(int objectId, int consumes, int giveAmount) {
         useOnWalk = true;
         useOnWalkObjectId = objectId;

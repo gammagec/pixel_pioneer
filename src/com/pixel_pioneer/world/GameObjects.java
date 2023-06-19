@@ -158,4 +158,8 @@ public class GameObjects {
         setBlocking(false);
         setDamage(1);
     }};
+
+    public static GameObject FEATHER = new GameObject("feather", ImageAssets.FEATHER) {{
+        setCanPickup(true);
+    }};
 }
