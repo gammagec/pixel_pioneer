@@ -143,7 +143,7 @@ public class GameWindow extends JFrame implements WorldUpdateHandler {
                         topLeft = west.getImageAsset();
                     }
                     SpriteSheets.TILE_SPRITES.drawTile(g2d, x * tileWidth + startX, y * tileHeight + startY,
-                            tileWidth, tileHeight, tile.getImageAssetWithVariants(tLoc), topLeft, topRight, bottomLeft, bottomRight);
+                            tileWidth, tileHeight, tile.getImageAssetWithVariants(tLoc, world), topLeft, topRight, bottomLeft, bottomRight);
 
                     ObjectInstance obj = world.getObjectAt(tLoc);
                     if (obj != null) {

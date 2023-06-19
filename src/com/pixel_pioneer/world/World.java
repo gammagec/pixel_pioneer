@@ -23,12 +23,17 @@ public class World {
     private final BiomeGenerator biomeGenerator = new PerlinBiomeGenerator();
     private final BiomeGrower biomeGrower = new DefaultBiomeGrower();
 
+    //private PerlinNoiseGenerator perlinNoiseGenerator = new PerlinNoiseGenerator(random.nextGaussian());
+    private final double[][] variantMap = new double[Const.WORLD_SIZE][Const.WORLD_SIZE];
+
     public World() {
         ImageAssets.initialize();
 
         for (int y = 0; y < Const.WORLD_SIZE; y++) {
             for (int x = 0; x < Const.WORLD_SIZE; x++) {
                 locations[y][x] = new LocationInfo();
+                //variantMap[y][x] = perlinNoiseGenerator.noise(x, y, 32);
+                variantMap[y][x] = random.nextDouble(2) - 1;
             }
         }
         generateBiomes();
@@ -255,5 +260,9 @@ public class World {
         if (existingObj == null) {
             locations[loc.getY()][loc.getX()].setObjectInstance(obj);
         }
+    }
+
+    public double getVariantAt(PointI loc) {
+        return variantMap[loc.getY()][loc.getX()];
     }
 }

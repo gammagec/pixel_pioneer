@@ -59,13 +59,14 @@ public class Tile {
         return imageAsset;
     }
 
-    public ImageAsset getImageAssetWithVariants(PointI loc) {
+    public ImageAsset getImageAssetWithVariants(PointI loc, World world) {
         int x = loc.getX();
         int y = loc.getY();
         if (variants.size() > 0) {
-            if ((x * x + y * y * 12) % 5 == 0) {
-                int v = (x * y * 3) % variants.size();
-                return variants.get(v);
+            double noise = world.getVariantAt(loc);
+            if (noise > 0) {
+                int variant = (int) Math.floor(noise * variants.size());
+                return variants.get(variant);
             }
         }
         return imageAsset;
