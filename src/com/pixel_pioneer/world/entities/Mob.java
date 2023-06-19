@@ -139,14 +139,17 @@ public class Mob {
             mobInstance.setLocation(dst);
             Player player = world.getPlayer();
             if (pLoc.equals(dst) && !player.isFlying() && player.isAlive()) {
-                player.takeDamage(getDamage());
-                if (!player.isAlive()) {
-                    soundEngine.playDeadSong();
-                } else {
-                    soundEngine.playOw();
+                int damage = getDamage();
+                if (damage > 0) {
+                    player.takeDamage(getDamage());
+                    if (!player.isAlive()) {
+                        soundEngine.playDeadSong();
+                    } else {
+                        soundEngine.playOw();
+                    }
+                    world.playerUpdated();
+                    world.worldUpdated();
                 }
-                world.playerUpdated();
-                world.worldUpdated();
             }
         }
     }
