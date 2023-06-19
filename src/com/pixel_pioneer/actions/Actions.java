@@ -10,6 +10,7 @@ import com.pixel_pioneer.ui.MiniMap;
 import com.pixel_pioneer.util.Direction;
 import com.pixel_pioneer.util.PointI;
 import com.pixel_pioneer.world.*;
+import com.pixel_pioneer.world.entities.Mob;
 import com.pixel_pioneer.world.entities.MobInstance;
 import com.pixel_pioneer.world.entities.Player;
 
@@ -162,7 +163,7 @@ public class Actions {
             world.putObject(loc, new ObjectInstance(obj.getId(), obj.getUses()));
             player.removeObject(obj.getId());
         } else {
-            MobInstance mob = world.getMobAt(loc.getX(), loc.getY());
+            MobInstance mob = world.getMobAt(loc);
             if (mob != null) {
                 world.killMob(mob);
             }
@@ -241,6 +242,12 @@ public class Actions {
         if (tile.isSwim() && !player.isExhausted() && !player.isFlying()) {
             player.takeStamina(1);
             needsHudUpdate = true;
+        }
+        // Check for mobs in the square
+        MobInstance mobInst = world.getMobAt(loc);
+        if (mobInst != null) {
+            Mob mob = mobInst.getMob();
+            damage += mob.getDamage();
         }
         ObjectInstance obj = world.getObjectAt(loc);
         if (obj != null && !player.isFlying()) {

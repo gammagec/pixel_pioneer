@@ -20,7 +20,7 @@ public class Main {
     public static void main(String[] args) {
         SoundEngine soundEngine = new SoundEngine();
         World world = new World();
-        AiEngine aiEngine = new AiEngine(world);
+        AiEngine aiEngine = new AiEngine(world, soundEngine);
         Hud hud = new Hud(world.getPlayer());
         Inventory inventory = new Inventory(world.getPlayer());
         MiniMap miniMap = new MiniMap(world);

@@ -2,6 +2,7 @@ package com.pixel_pioneer.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class PointI extends Point<Integer> {
     public PointI(Integer x, Integer y) {
@@ -34,6 +35,10 @@ public class PointI extends Point<Integer> {
         newX = Math.min(newX, maxX - 1);
         newY = Math.min(newY, maxY - 1);
         return new PointI(newX, newY);
+    }
+
+    public boolean equals(PointI p) {
+        return Objects.equals(p.getY(), getY()) && Objects.equals(p.getX(), getX());
     }
 
     public boolean inBounds(int mx, int my, int width, int height) {

@@ -113,9 +113,7 @@ public class GameWindow extends JFrame implements WorldUpdateHandler {
             for (int x = 0; x <= numX; x++) {
                 // Comment below is from the FIRST version!
                 // Draw the tile (red or black square), color[0] is black, color[1] is red
-                int tx = leftIndex + x;
-                int ty = topIndex + y;
-                PointI tLoc = new PointI(tx, ty);
+                PointI tLoc = new PointI(leftIndex + x, topIndex + y);
                 if (tLoc.inBounds(0, 0, Const.WORLD_SIZE, Const.WORLD_SIZE)) {
                     Tile tile = world.getTileAt(tLoc);
                     Tile north = world.getTileAt(tLoc.delta(0, -1));
@@ -145,7 +143,7 @@ public class GameWindow extends JFrame implements WorldUpdateHandler {
                         topLeft = west.getImageAsset();
                     }
                     SpriteSheets.TILE_SPRITES.drawTile(g2d, x * tileWidth + startX, y * tileHeight + startY,
-                            tileWidth, tileHeight, tile.getImageAssetWithVariants(tx, ty), topLeft, topRight, bottomLeft, bottomRight);
+                            tileWidth, tileHeight, tile.getImageAssetWithVariants(tLoc), topLeft, topRight, bottomLeft, bottomRight);
 
                     ObjectInstance obj = world.getObjectAt(tLoc);
                     if (obj != null) {
@@ -158,13 +156,13 @@ public class GameWindow extends JFrame implements WorldUpdateHandler {
                     g2d.setColor(new Color(255, 255, 255));
                     g2d.fillRect(x * tileWidth + startX, y * tileHeight + startY, tileWidth, tileHeight);
                 }
-                MobInstance mobInst = world.getMobAt(tx, ty);
+                MobInstance mobInst = world.getMobAt(tLoc);
                 if (mobInst != null) {
                     Mob mob = Mob.MOBS_BY_ID.get(mobInst.getMobId());
                     SpriteSheets.OBJ_SPRITES.drawTile(g2d, x * tileWidth + startX, y * tileHeight + startY,
                             tileWidth, tileHeight, mob.getImageAsset());
                 }
-                if (tx == loc.getX() && ty == loc.getY()) {
+                if (tLoc.equals(loc)) {
                     if (player.getHealth() > 0) {
                         SpriteSheets.OBJ_SPRITES.drawTile(g2d, x * tileWidth + startX, y * tileHeight + startY,
                                 tileWidth, tileHeight,

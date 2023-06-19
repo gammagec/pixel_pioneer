@@ -1,5 +1,6 @@
 package com.pixel_pioneer.world.entities;
 
+import com.pixel_pioneer.sound.SoundEngine;
 import com.pixel_pioneer.util.PointI;
 import com.pixel_pioneer.world.*;
 import com.pixel_pioneer.world.biomes.Biome;
@@ -90,7 +91,7 @@ public class Mob {
         return imageAsset;
     }
 
-    public void update(World world, MobInstance mobInstance) {
+    public void update(World world, MobInstance mobInstance, SoundEngine soundEngine) {
         PointI dst = null;
 
         PointI pLoc = world.getPlayer().getLocation();
@@ -137,8 +138,13 @@ public class Mob {
         if (canMove(world, dst)) {
             mobInstance.setLocation(dst);
             Player player = world.getPlayer();
-            if (Objects.equals(dst.getX(), pLoc.getX()) && Objects.equals(dst.getY(), pLoc.getY()) && !player.isFlying()) {
+            if (pLoc.equals(dst) && !player.isFlying() && player.isAlive()) {
                 player.takeDamage(getDamage());
+                if (!player.isAlive()) {
+                    soundEngine.playDeadSong();
+                } else {
+                    soundEngine.playOw();
+                }
                 world.playerUpdated();
                 world.worldUpdated();
             }

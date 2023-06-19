@@ -41,10 +41,10 @@ public class World {
         this.mobs.add(mob);
     }
 
-    public MobInstance getMobAt(int x, int y) {
+    public MobInstance getMobAt(PointI loc) {
         for (MobInstance mob : mobs) {
             PointI p = mob.getLocation();
-            if (p.getX() == x && p.getY() == y) {
+            if (Objects.equals(p.getX(), loc.getX()) && Objects.equals(p.getY(), loc.getY())) {
                 return mob;
             }
         }

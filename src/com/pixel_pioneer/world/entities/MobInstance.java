@@ -11,6 +11,10 @@ public class MobInstance {
         this.mobId = mobId;
     }
 
+    public Mob getMob() {
+        return Mob.MOBS_BY_ID.get(mobId);
+    }
+
     public int getMobId() {
         return mobId;
     }

@@ -1,5 +1,7 @@
 package com.pixel_pioneer.world;
 
+import com.pixel_pioneer.util.PointI;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -57,7 +59,9 @@ public class Tile {
         return imageAsset;
     }
 
-    public ImageAsset getImageAssetWithVariants(int x, int y) {
+    public ImageAsset getImageAssetWithVariants(PointI loc) {
+        int x = loc.getX();
+        int y = loc.getY();
         if (variants.size() > 0) {
             if ((x * x + y * y * 12) % 5 == 0) {
                 int v = (x * y * 3) % variants.size();
