@@ -26,7 +26,8 @@ public class Biomes {
         put(Tiles.FOREST_GRASS, 195);
     }}, new HashMap<>() {{
         put(GameObjects.NO_OBJECT, 1469);
-        put(GameObjects.TREE, 200);
+        put(GameObjects.TREE, 100);
+        put(GameObjects.TREE_V1, 100);
         put(GameObjects.BERRY_BUSH, 10);
         put(GameObjects.ROCK, 10);
         put(GameObjects.TWIG, 10);

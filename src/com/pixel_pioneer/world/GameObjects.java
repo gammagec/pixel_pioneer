@@ -80,6 +80,17 @@ public class GameObjects {
         }}, 1));
     }};
 
+    public static GameObject TREE_V1 = new GameObject("tree_v1", ImageAssets.TREE_V1) {{
+        setBlocking(true);
+        setUses(2);
+        setAssetAtUse(1, ImageAssets.TREE_V1_1);
+        addUseEffect(new UseEffect(new HashSet<>() {{
+            add(GameObjects.BASIC_AXE.getId());
+        }}, new HashMap<>() {{
+            put(GameObjects.TWIG.getId(), 2);
+        }}, 1));
+    }};
+
     public static GameObject SPRUCE_TREE = new GameObject("Spruce Tree", ImageAssets.SPRUCE_TREE) {{
         setBlocking(true);
         setUses(2);

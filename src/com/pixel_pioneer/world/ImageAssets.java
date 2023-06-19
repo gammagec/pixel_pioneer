@@ -15,12 +15,16 @@ public class ImageAssets {
     public static ImageAsset GRASS_V3 = new ImageAsset("images/grass3_v3.png", AssetType.TILE_ASSET);
     public static ImageAsset GRASS_V4 = new ImageAsset("images/grass3_v4.png", AssetType.TILE_ASSET);
     public static ImageAsset FOREST_GRASS = new ImageAsset("images/forest_grass.png", AssetType.TILE_ASSET);
+    public static ImageAsset FOREST_GRASS_V1 = new ImageAsset("images/forest_grass_v1.png", AssetType.TILE_ASSET);
+    public static ImageAsset FOREST_GRASS_V2 = new ImageAsset("images/forest_grass_v2.png", AssetType.TILE_ASSET);
     public static ImageAsset WATER = new ImageAsset("images/Water.png", AssetType.TILE_ASSET);
     public static ImageAsset DIRT = new ImageAsset("images/Dirt.png", AssetType.TILE_ASSET);
     public static ImageAsset LAVA = new ImageAsset("images/Lava.png", AssetType.TILE_ASSET);
     public static ImageAsset SAND = new ImageAsset("images/Sand.png", AssetType.TILE_ASSET);
     public static ImageAsset TREE = new ImageAsset("images/tree1.png", AssetType.OBJECT_ASSET);
     public static ImageAsset TREE_1 = new ImageAsset("images/tree1_1.png", AssetType.OBJECT_ASSET);
+    public static ImageAsset TREE_V1 = new ImageAsset("images/tree_v1.png", AssetType.OBJECT_ASSET);
+    public static ImageAsset TREE_V1_1 = new ImageAsset("images/tree_v1_1.png", AssetType.OBJECT_ASSET);
     public static ImageAsset CACTUS = new ImageAsset("images/cactus.png", AssetType.OBJECT_ASSET);
     public static ImageAsset SNOW = new ImageAsset("images/snow2.png", AssetType.TILE_ASSET);
     public static ImageAsset ICE = new ImageAsset("images/ice.png", AssetType.TILE_ASSET);
