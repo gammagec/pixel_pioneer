@@ -12,6 +12,8 @@ public class Tiles {
     public static Tile GRASS = new Tile("grass", ImageAssets.GRASS) {{
         addVariant(ImageAssets.GRASS_V1);
         addVariant(ImageAssets.GRASS_V2);
+        addVariant(ImageAssets.GRASS_V3);
+        addVariant(ImageAssets.GRASS_V4);
     }};
     public static Tile FOREST_GRASS = new Tile("forest grass", ImageAssets.FOREST_GRASS);
     public static Tile DIRT = new Tile("dirt", ImageAssets.DIRT);
