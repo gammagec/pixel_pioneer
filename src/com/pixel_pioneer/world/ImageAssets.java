@@ -27,6 +27,9 @@ public class ImageAssets {
     public static ImageAsset TREE_V1_1 = new ImageAsset("images/tree_v1_1.png", AssetType.OBJECT_ASSET);
     public static ImageAsset CACTUS = new ImageAsset("images/cactus.png", AssetType.OBJECT_ASSET);
     public static ImageAsset SNOW = new ImageAsset("images/snow2.png", AssetType.TILE_ASSET);
+    public static ImageAsset SNOW_V1 = new ImageAsset("images/snow2_v1.png", AssetType.TILE_ASSET);
+    public static ImageAsset SNOW_V2 = new ImageAsset("images/snow2_v2.png", AssetType.TILE_ASSET);
+    public static ImageAsset SNOW_V3 = new ImageAsset("images/snow2_v3.png", AssetType.TILE_ASSET);
     public static ImageAsset ICE = new ImageAsset("images/ice.png", AssetType.TILE_ASSET);
     public static ImageAsset SPRUCE_TREE = new ImageAsset("images/Spruce Tree.png", AssetType.OBJECT_ASSET);
 

@@ -26,7 +26,11 @@ public class Tiles {
         setSwimAsset(ImageAssets.IN_LAVA);
     }};
     public static Tile SAND = new Tile("sand", ImageAssets.SAND);
-    public static Tile SNOW = new Tile("snow", ImageAssets.SNOW);
+    public static Tile SNOW = new Tile("snow", ImageAssets.SNOW) {{
+        addVariant(ImageAssets.SNOW_V1);
+        addVariant(ImageAssets.SNOW_V2);
+        addVariant(ImageAssets.SNOW_V3);
+    }};
     public static Tile ICE = new Tile("ice", ImageAssets.ICE);
 
     // 4096 combinations
