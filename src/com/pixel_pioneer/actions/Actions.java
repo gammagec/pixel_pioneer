@@ -87,16 +87,20 @@ public class Actions {
     }
 
     public void onGenerateBiomes() {
-        world.generateBiomes();
-        world.generateMap();
-        world.worldUpdated();
+        if (player.isFlying()) {
+            world.generateBiomes();
+            world.generateMap();
+            world.worldUpdated();
+        }
     }
 
     public void onGrowBiomes() {
-        world.growBiomes();
-        world.generateMap();
-        miniMap.update();
-        world.worldUpdated();
+        if (player.isFlying()) {
+            world.growBiomes();
+            world.generateMap();
+            miniMap.update();
+            world.worldUpdated();
+        }
     }
 
     public void onFly() {
@@ -177,7 +181,7 @@ public class Actions {
             if (obj.isCanEat()) {
                 player.eatObject(obj);
                 player.removeObject(obj.getId());
-            } else if (obj.isCanUse()) {
+            } else if (obj.isCanUse() && !player.isFlying()) {
                 // Use mode
                 player.setBuildingIndex(index);
                 keyboardHandler.setUseMode();
@@ -245,7 +249,7 @@ public class Actions {
         }
         // Check for mobs in the square
         MobInstance mobInst = world.getMobAt(loc);
-        if (mobInst != null) {
+        if (mobInst != null && !player.isFlying()) {
             Mob mob = mobInst.getMob();
             damage += mob.getDamage();
         }
