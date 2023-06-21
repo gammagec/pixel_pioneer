@@ -17,7 +17,6 @@ public class Biomes {
         put(Tiles.GRASS, 97);
     }}, new HashMap<>() {{
         put(GameObjects.NO_OBJECT, 1969);
-        put(GameObjects.BERRY_BUSH, 10);
         put(GameObjects.ROCK, 10);
         put(GameObjects.TWIG, 10);
     }}, Color.GREEN);
@@ -26,9 +25,6 @@ public class Biomes {
         put(Tiles.FOREST_GRASS, 195);
     }}, new HashMap<>() {{
         put(GameObjects.NO_OBJECT, 1469);
-        put(GameObjects.TREE, 100);
-        put(GameObjects.TREE_V1, 100);
-        put(GameObjects.BERRY_BUSH, 10);
         put(GameObjects.ROCK, 10);
         put(GameObjects.TWIG, 10);
     }}, new Color(0, 128, 0));
@@ -49,13 +45,11 @@ public class Biomes {
     }}, new HashMap<>() {{
         put(GameObjects.NO_OBJECT, 1869);
         put(GameObjects.SAND_BOULDER, 100);
-        put(GameObjects.CACTUS, 100);
     }}, new Color(255, 255, 0));
     public static Biome SNOW = new Biome("snow biome", new HashMap<>() {{
         put(Tiles.SNOW, 4);
     }}, new HashMap<>() {{
         put(GameObjects.NO_OBJECT, 1869);
-        put(GameObjects.SPRUCE_TREE, 100);
         put(GameObjects.ROCK, 10);
         put(GameObjects.TWIG, 10);
     }}, new Color(255, 255, 255));

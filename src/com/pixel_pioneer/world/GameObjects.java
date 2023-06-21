@@ -173,4 +173,7 @@ public class GameObjects {
     public static GameObject FEATHER = new GameObject("feather", ImageAssets.FEATHER) {{
         setCanPickup(true);
     }};
+
+    public static void initialize() {
+    }
 }

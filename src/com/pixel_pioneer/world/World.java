@@ -26,6 +26,8 @@ public class World {
     //private PerlinNoiseGenerator perlinNoiseGenerator = new PerlinNoiseGenerator(random.nextGaussian());
     private final double[][] variantMap = new double[Const.WORLD_SIZE][Const.WORLD_SIZE];
 
+    private final ObjectGrower objectGrower = new DefaultObjectGrower();
+
     public World() {
         ImageAssets.initialize();
 
@@ -38,6 +40,10 @@ public class World {
         }
         generateBiomes();
         generateMap();
+
+        for (int i = 0; i < Const.STARTING_GROWTH_CYCLES; i++) {
+            objectGrower.growObjects(this);
+        }
 
         player.reset(this);
     }

@@ -1,6 +1,7 @@
 package com.pixel_pioneer;
 
 public class Const {
+    public static final int STARTING_GROWTH_CYCLES = 10;
     public static int WORLD_SIZE = 512;
     public static int TILE_SIZE = 64;
 

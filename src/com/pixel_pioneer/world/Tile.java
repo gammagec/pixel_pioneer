@@ -4,6 +4,7 @@ import com.pixel_pioneer.util.PointI;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 public class Tile {
@@ -16,13 +17,22 @@ public class Tile {
     private static int nextId = 0;
     private boolean swim = false;
     private ImageAsset swimAsset;
-    private List<ImageAsset> variants = new ArrayList<>();
+    private final List<ImageAsset> variants = new ArrayList<>();
+    private final List<GameObject> growObjects = new ArrayList<>();
 
-    Tile(String name, ImageAsset imageAsset) {
+    private static final Random RANDOM = new Random();
+
+    Tile(String name, ImageAsset imageAsset, Map<GameObject, Integer> growObjectWeights) {
         this.isBlocking = false;
         this.imageAsset = imageAsset;
         this.name = name;
         this.id = nextId++;
+        for (GameObject obj : growObjectWeights.keySet().toArray(new GameObject[0])) {
+            int weight = growObjectWeights.get(obj);
+            for (int i = 0; i < weight; i++) {
+                growObjects.add(obj);
+            }
+        }
     }
 
     public void addVariant(ImageAsset variant) {
@@ -70,6 +80,14 @@ public class Tile {
             }
         }
         return imageAsset;
+    }
+
+    public GameObject getGrowObject() {
+        if (growObjects.size() > 0) {
+            return growObjects.get(RANDOM.nextInt(growObjects.size()));
+        } else {
+            return null;
+        }
     }
 
     public String getName() {
