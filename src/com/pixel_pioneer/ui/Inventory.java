@@ -72,11 +72,12 @@ public class Inventory {
             ObjectInstance at = player.getInventoryAt(selection.getX(), selection.getY());
             if (at == null) {
                 player.setInventoryAt(selection.getX(), selection.getY(), selectedObject);
+                selectedObject = null;
             } else if (at.same(selectedObject)) {
                 ObjectInstance inst = player.getInventoryAt(selection.getX(), selection.getY());
                 inst.addInstances(selectedObject.getCount());
+                selectedObject = null;
             }
-            selectedObject = null;
         }
     }
 
