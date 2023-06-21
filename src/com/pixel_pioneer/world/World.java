@@ -265,4 +265,8 @@ public class World {
     public double getVariantAt(PointI loc) {
         return variantMap[loc.getY()][loc.getX()];
     }
+
+    public void removeAllMobs() {
+        this.mobs.clear();
+    }
 }

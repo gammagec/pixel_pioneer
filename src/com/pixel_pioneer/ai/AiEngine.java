@@ -21,6 +21,7 @@ public class AiEngine {
 
     public void populateMobs() {
         Mobs.initialize();
+        world.removeAllMobs();
         for (int i = 0; i < 2000; i++) {
             Mob mob = Mob.getRandomMob();
             MobInstance mobInst = new MobInstance(mob.getId(), world.randomSpawnPoint(mob.getBiomes(), mob.isCanSwim()));

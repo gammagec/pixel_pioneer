@@ -91,6 +91,8 @@ public class Actions {
             world.generateBiomes();
             world.generateMap();
             world.worldUpdated();
+            // Reset mobs
+            aiEngine.populateMobs();
         }
     }
 
@@ -100,6 +102,8 @@ public class Actions {
             world.generateMap();
             miniMap.update();
             world.worldUpdated();
+            // Reset mobs
+            aiEngine.populateMobs();
         }
     }
 
