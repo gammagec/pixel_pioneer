@@ -1,5 +1,6 @@
 package com.pixel_pioneer.world;
 
+import java.awt.*;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -168,6 +169,7 @@ public class GameObjects {
         setCanUse(true);
         setBlocking(false);
         setDamage(1);
+        addAnimationFrame(ImageAssets.CAMP_FIRE_2);
     }};
 
     public static GameObject FEATHER = new GameObject("feather", ImageAssets.FEATHER) {{

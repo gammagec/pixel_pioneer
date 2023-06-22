@@ -2,10 +2,7 @@ package com.pixel_pioneer.world;
 
 import com.pixel_pioneer.world.entities.Player;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class GameObject {
 
@@ -31,12 +28,18 @@ public class GameObject {
     private int useOnWalkConsumes = 0;
     private int useOnWalkGiveAmount = 0;
 
+    private final List<ImageAsset> animationFrames = new ArrayList<>();
+
     public GameObject(String name, ImageAsset imageAsset) {
         this.imageAsset = imageAsset;
         this.isBlocking = false;
         this.name = name;
         this.id = nextId++;
         OBJECTS_BY_ID.put(this.id, this);
+    }
+
+    public void addAnimationFrame(ImageAsset imageAsset) {
+        animationFrames.add(imageAsset);
     }
 
     public ObjectInstance getDefaultInstance() {
@@ -98,6 +101,14 @@ public class GameObject {
         ImageAsset assetAtUse = assetsAtUse.get(use);
         if (assetAtUse != null) {
             return assetAtUse;
+        }
+        if (animationFrames.size() > 0) {
+            int frame = Math.abs((int) new Date().getTime()) % (animationFrames.size() + 1);
+            if (frame == 0) {
+                return imageAsset;
+            } else {
+                return animationFrames.get(frame - 1);
+            }
         }
         return imageAsset;
     }

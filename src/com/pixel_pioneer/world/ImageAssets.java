@@ -65,6 +65,7 @@ public class ImageAssets {
     public static ImageAsset BERRY_BUSH = new ImageAsset("images/Berry_Bush.png", AssetType.OBJECT_ASSET);
     public static ImageAsset BERRY_BUSH_0 = new ImageAsset("images/berry_bush_no_berries.png", AssetType.OBJECT_ASSET);
     public static ImageAsset CAMP_FIRE = new ImageAsset("images/Campfire.png", AssetType.OBJECT_ASSET);
+    public static ImageAsset CAMP_FIRE_2 = new ImageAsset("images/Campfire2.png", AssetType.OBJECT_ASSET);
     public static ImageAsset CHEST = new ImageAsset("images/Chest.png", AssetType.OBJECT_ASSET);
     public static ImageAsset CHICKEN = new ImageAsset("images/chicken2.png", AssetType.OBJECT_ASSET);
     public static ImageAsset DOOR = new ImageAsset("images/Door.png", AssetType.OBJECT_ASSET);
