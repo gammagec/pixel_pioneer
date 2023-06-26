@@ -35,8 +35,9 @@ public class Player extends Entity {
 
     public void takeDamage(int damage) {
         health = health - damage;
-        if (health < 0) {
+        if (health <= 0) {
             health = 0;
+            building = 0;
         }
     }
 

@@ -54,7 +54,16 @@ public class KeyboardHandler extends KeyAdapter {
             }
         }
     };
+    private final KeyAdapter deadMode = new KeyAdapter() {
+        @Override
+        public void keyPressed(KeyEvent e) {
+            int keyCode = e.getKeyCode();
+            switch (keyCode) {
+                case KeyEvent.VK_R, KeyEvent.VK_ESCAPE -> actions.onDeadReset();
 
+            }
+        }
+    };
     private final KeyAdapter worldMode = new KeyAdapter() {
         @Override
         public void keyPressed(KeyEvent e) {
@@ -97,6 +106,7 @@ public class KeyboardHandler extends KeyAdapter {
     }
 
     public void setUseMode() { this.activeAdapter = useMode; }
+    public void setDeadMode() { this.activeAdapter = deadMode; }
 
     public void setWorldMode() {
         this.activeAdapter = worldMode;

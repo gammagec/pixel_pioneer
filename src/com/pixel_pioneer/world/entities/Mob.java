@@ -1,5 +1,6 @@
 package com.pixel_pioneer.world.entities;
 
+import com.pixel_pioneer.actions.KeyboardHandler;
 import com.pixel_pioneer.sound.SoundEngine;
 import com.pixel_pioneer.util.PointI;
 import com.pixel_pioneer.world.*;
@@ -91,7 +92,7 @@ public class Mob {
         return imageAsset;
     }
 
-    public void update(World world, MobInstance mobInstance, SoundEngine soundEngine) {
+    public void update(World world, MobInstance mobInstance, SoundEngine soundEngine, KeyboardHandler keyboardHandler) {
         PointI dst = null;
 
         PointI pLoc = world.getPlayer().getLocation();
@@ -143,6 +144,7 @@ public class Mob {
                 if (damage > 0) {
                     player.takeDamage(getDamage());
                     if (!player.isAlive()) {
+                        keyboardHandler.setDeadMode();
                         soundEngine.playDeadSong();
                     } else {
                         soundEngine.playOw();

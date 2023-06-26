@@ -118,6 +118,13 @@ public class Actions {
         world.worldUpdated();
         soundEngine.playNextSong();
     }
+    public void onDeadReset() {
+        player.reset(world);
+        keyboardHandler.setWorldMode();
+        hud.update();
+        world.worldUpdated();
+        soundEngine.playNextSong();
+    }
 
     public void use(Direction d) {
         PointI loc = player.getLocation();
@@ -277,6 +284,7 @@ public class Actions {
             needsHudUpdate = true;
             player.takeDamage(damage);
             if (!player.isAlive()) {
+                keyboardHandler.setDeadMode();
                 soundEngine.playDeadSong();
             } else {
                 soundEngine.playOw();
