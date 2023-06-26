@@ -90,6 +90,7 @@ public class Actions {
         if (player.isFlying()) {
             world.generateBiomes();
             world.generateMap();
+            world.growInitialObjects();
             world.worldUpdated();
             // Reset mobs
             aiEngine.populateMobs();
@@ -100,6 +101,7 @@ public class Actions {
         if (player.isFlying()) {
             world.growBiomes();
             world.generateMap();
+            world.growInitialObjects();
             miniMap.update();
             world.worldUpdated();
             // Reset mobs

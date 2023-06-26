@@ -40,12 +40,15 @@ public class World {
         }
         generateBiomes();
         generateMap();
+        growInitialObjects();
 
+
+        player.reset(this);
+    }
+    public void growInitialObjects(){
         for (int i = 0; i < Const.STARTING_GROWTH_CYCLES; i++) {
             objectGrower.growObjects(this);
         }
-
-        player.reset(this);
     }
 
     public void addMob(MobInstance mob) {
