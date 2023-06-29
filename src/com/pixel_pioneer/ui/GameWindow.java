@@ -35,7 +35,7 @@ public class GameWindow extends JFrame implements WorldUpdateHandler {
 
     public GameWindow(World world, Hud hud, Inventory inventory, KeyboardHandler keyboardHandler,
                       MiniMap miniMap, CraftingMenu craftingMenu) {
-        super("Game Window");
+        super("Pixel Pioneer");
         this.craftingMenu = craftingMenu;
         this.inventory = inventory;
         this.world = world;
