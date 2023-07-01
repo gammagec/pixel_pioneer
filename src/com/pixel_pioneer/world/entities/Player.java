@@ -39,8 +39,9 @@ public class Player extends Entity implements TickHandler {
 
     public void takeDamage(int damage) {
         health = health - damage;
-        if (health < 0) {
+        if (health <= 0) {
             health = 0;
+            building = 0;
         }
         if (!isAlive()) {
             soundEngine.playDeadSong();

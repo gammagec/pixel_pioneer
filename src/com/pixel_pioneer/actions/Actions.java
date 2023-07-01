@@ -94,6 +94,7 @@ public class Actions {
         if (player.isFlying()) {
             world.generateBiomes();
             world.generateMap();
+            world.growInitialObjects();
             world.worldUpdated();
             // Reset mobs
             aiEngine.populateMobs();
@@ -104,6 +105,7 @@ public class Actions {
         if (player.isFlying()) {
             world.growBiomes();
             world.generateMap();
+            world.growInitialObjects();
             miniMap.update();
             world.worldUpdated();
             // Reset mobs
@@ -118,6 +120,13 @@ public class Actions {
 
     public void onReset() {
         player.reset(world);
+        hud.update();
+        world.worldUpdated();
+        soundEngine.playNextSong();
+    }
+    public void onDeadReset() {
+        player.reset(world);
+        keyboardHandler.setWorldMode();
         hud.update();
         world.worldUpdated();
         soundEngine.playNextSong();
@@ -282,6 +291,12 @@ public class Actions {
         if (damage > 0) {
             needsHudUpdate = true;
             player.takeDamage(damage);
+            if (!player.isAlive()) {
+                keyboardHandler.setDeadMode();
+                soundEngine.playDeadSong();
+            } else {
+                soundEngine.playOw();
+            }
         } else if (!tile.isSwim() && !player.isStaminaFull()) {
             player.regenStamina(1);
             needsHudUpdate = true;

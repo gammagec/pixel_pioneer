@@ -30,6 +30,7 @@ public class Main {
         Actions actions = new Actions(world, hud, inventory, soundEngine, aiEngine, miniMap, craftingMenu, clock);
         KeyboardHandler keyboardHandler = new KeyboardHandler(actions);
         actions.setKeyboardHandler(keyboardHandler);
+        aiEngine.setKeyboardHandler(keyboardHandler);
         soundEngine.playBackgroundMusic();
         GameWindow gameWindow = new GameWindow(
                 world, hud, inventory, keyboardHandler, miniMap, craftingMenu);
