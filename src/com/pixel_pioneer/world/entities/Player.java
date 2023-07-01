@@ -1,25 +1,29 @@
 package com.pixel_pioneer.world.entities;
 
 import com.pixel_pioneer.Const;
+import com.pixel_pioneer.clock.Clock;
+import com.pixel_pioneer.clock.TickHandler;
+import com.pixel_pioneer.sound.SoundEngine;
 import com.pixel_pioneer.world.*;
 
 import java.util.*;
 
-public class Player extends Entity {
+public class Player extends Entity implements TickHandler {
 
+    private final SoundEngine soundEngine;
+    private final World world;
     private int health = Const.MAX_HEALTH;
     private int hunger = Const.MAX_HUNGER;
-
     private int thirst = Const.MAX_THIRST;
-
     private int stamina = Const.MAX_STAMINA;
-
     private int building = 0;
     private boolean flying = false;
-
     private final ObjectInstance[][] inventory = new ObjectInstance[Const.INVENTORY_HEIGHT][Const.INVENTORY_WIDTH];
 
-    public Player() {
+    public Player(Clock clock, SoundEngine soundEngine, World world) {
+        this.soundEngine = soundEngine;
+        this.world = world;
+        clock.addTickHandler(this);
         inventory[0][0] = new ObjectInstance(GameObjects.BASIC_SWORD.getId(), 1);
         inventory[0][1] = new ObjectInstance(GameObjects.BASIC_AXE.getId(), 1);
         inventory[0][2] = new ObjectInstance(GameObjects.BASIC_PICK_AXE.getId(), 1);
@@ -37,6 +41,11 @@ public class Player extends Entity {
         health = health - damage;
         if (health < 0) {
             health = 0;
+        }
+        if (!isAlive()) {
+            soundEngine.playDeadSong();
+        } else {
+            soundEngine.playOw();
         }
     }
 
@@ -158,6 +167,9 @@ public class Player extends Entity {
         if (health < Const.MAX_HEALTH ) {
             health++;
         }
+        if (hunger < Const.MAX_HUNGER) {
+            hunger++;
+        }
     }
 
     public void toggleFlying() {
@@ -195,5 +207,18 @@ public class Player extends Entity {
 
     public void setInventoryAt(int x, int y, ObjectInstance o) {
         inventory[y][x] = o;
+    }
+
+    @Override
+    public void onTick(int time) {
+        if (time == Const.MAX_TIME) {
+            hunger--;
+            if (hunger < 0) {
+                hunger = 0;
+                health--;
+                takeDamage(1);
+            }
+            world.playerUpdated();
+        }
     }
 }

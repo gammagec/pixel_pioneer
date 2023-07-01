@@ -142,11 +142,6 @@ public class Mob {
                 int damage = getDamage();
                 if (damage > 0) {
                     player.takeDamage(getDamage());
-                    if (!player.isAlive()) {
-                        soundEngine.playDeadSong();
-                    } else {
-                        soundEngine.playOw();
-                    }
                     world.playerUpdated();
                     world.worldUpdated();
                 }

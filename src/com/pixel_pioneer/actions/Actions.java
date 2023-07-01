@@ -2,6 +2,7 @@ package com.pixel_pioneer.actions;
 
 import com.pixel_pioneer.Const;
 import com.pixel_pioneer.ai.AiEngine;
+import com.pixel_pioneer.clock.Clock;
 import com.pixel_pioneer.sound.SoundEngine;
 import com.pixel_pioneer.ui.CraftingMenu;
 import com.pixel_pioneer.ui.Hud;
@@ -27,6 +28,7 @@ public class Actions {
     private final MiniMap miniMap;
 
     private final CraftingMenu craftingMenu;
+    private final Clock clock;
     private KeyboardHandler keyboardHandler;
 
     public Actions(
@@ -36,7 +38,8 @@ public class Actions {
             SoundEngine soundEngine,
             AiEngine aiEngine,
             MiniMap miniMap,
-            CraftingMenu craftingMenu) {
+            CraftingMenu craftingMenu,
+            Clock clock) {
         this.world = world;
         player = world.getPlayer();
         this.hud = hud;
@@ -45,6 +48,7 @@ public class Actions {
         this.aiEngine = aiEngine;
         this.miniMap = miniMap;
         this.craftingMenu = craftingMenu;
+        this.clock = clock;
     }
 
     public void setKeyboardHandler(KeyboardHandler keyboardHandler) {
@@ -61,7 +65,7 @@ public class Actions {
 
     public void endCraft() {
         craftingMenu.setOpen(false);
-        aiEngine.setPaused(false);
+        clock.setPaused(false);
         keyboardHandler.setWorldMode();
         world.worldUpdated();
     }
@@ -81,7 +85,7 @@ public class Actions {
     public void onCraft() {
         craftingMenu.setOpen(true);
         keyboardHandler.setCraftingMode();
-        aiEngine.setPaused(true);
+        clock.setPaused(true);
         craftingMenu.update();
         world.worldUpdated();
     }
@@ -183,8 +187,10 @@ public class Actions {
         if (objId != null) {
             GameObject obj = GameObject.OBJECTS_BY_ID.get(objId);
             if (obj.isCanEat()) {
-                player.eatObject(obj);
-                player.removeObject(obj.getId());
+                if (player.getHunger() < Const.MAX_HUNGER) {
+                    player.eatObject(obj);
+                    player.removeObject(obj.getId());
+                }
             } else if (obj.isCanUse() && !player.isFlying()) {
                 // Use mode
                 player.setBuildingIndex(index);
@@ -276,11 +282,6 @@ public class Actions {
         if (damage > 0) {
             needsHudUpdate = true;
             player.takeDamage(damage);
-            if (!player.isAlive()) {
-                soundEngine.playDeadSong();
-            } else {
-                soundEngine.playOw();
-            }
         } else if (!tile.isSwim() && !player.isStaminaFull()) {
             player.regenStamina(1);
             needsHudUpdate = true;
@@ -314,7 +315,7 @@ public class Actions {
         inventory.update();
         inventory.toggleOpen();
         keyboardHandler.setInventoryMode();
-        aiEngine.setPaused(true);
+        clock.setPaused(true);
         world.worldUpdated();
     }
 
@@ -352,7 +353,7 @@ public class Actions {
     public void endInventory() {
         keyboardHandler.setWorldMode();
         inventory.toggleOpen();
-        aiEngine.setPaused(false);
+        clock.setPaused(false);
         world.worldUpdated();
     }
 

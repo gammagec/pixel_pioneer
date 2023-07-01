@@ -1,6 +1,8 @@
 package com.pixel_pioneer.world;
 
 import com.pixel_pioneer.Const;
+import com.pixel_pioneer.clock.Clock;
+import com.pixel_pioneer.sound.SoundEngine;
 import com.pixel_pioneer.util.PointI;
 import com.pixel_pioneer.world.biomes.*;
 import com.pixel_pioneer.world.entities.Mob;
@@ -11,7 +13,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class World {
-    private final Player player = new Player();
+    private final Player player;
     private WorldUpdateHandler worldUpdateHandler = null;
 
     private final LocationInfo[][] locations = new LocationInfo[Const.WORLD_SIZE][Const.WORLD_SIZE];
@@ -28,7 +30,8 @@ public class World {
 
     private final ObjectGrower objectGrower = new DefaultObjectGrower();
 
-    public World() {
+    public World(Clock clock, SoundEngine soundEngine) {
+        player = new Player(clock, soundEngine, this);
         ImageAssets.initialize();
 
         for (int y = 0; y < Const.WORLD_SIZE; y++) {
