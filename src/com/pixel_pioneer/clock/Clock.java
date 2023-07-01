@@ -20,6 +20,10 @@ public class Clock {
         this.tickHandlers.add(tickHandler);
     }
 
+    public int getTime() {
+        return time;
+    }
+
     public void start() {
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {

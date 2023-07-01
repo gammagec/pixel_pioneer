@@ -34,7 +34,7 @@ public class Main {
         aiEngine.setKeyboardHandler(keyboardHandler);
         soundEngine.playBackgroundMusic();
         GameWindow gameWindow = new GameWindow(
-                world, hud, inventory, keyboardHandler, miniMap, craftingMenu);
+                world, hud, inventory, keyboardHandler, miniMap, craftingMenu, clock);
         aiEngine.populateMobs();
         clock.start();
         gameWindow.setVisible(true);

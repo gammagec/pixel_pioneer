@@ -9,16 +9,17 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-import static java.lang.System.console;
-import static java.lang.System.exit;
-
 import com.pixel_pioneer.Const;
 import com.pixel_pioneer.actions.KeyboardHandler;
+import com.pixel_pioneer.clock.Clock;
 import com.pixel_pioneer.util.PointI;
 import com.pixel_pioneer.world.entities.Mob;
 import com.pixel_pioneer.world.entities.MobInstance;
 import com.pixel_pioneer.world.entities.Player;
 import com.pixel_pioneer.world.*;
+
+import static com.pixel_pioneer.Const.MAX_TIME;
+import static java.lang.System.*;
 
 public class GameWindow extends JFrame implements WorldUpdateHandler {
 
@@ -30,11 +31,12 @@ public class GameWindow extends JFrame implements WorldUpdateHandler {
 
     final private Player player;
     final private MiniMap miniMap;
+    private final Clock clock;
 
     final private CraftingMenu craftingMenu;
 
     public GameWindow(World world, Hud hud, Inventory inventory, KeyboardHandler keyboardHandler,
-                      MiniMap miniMap, CraftingMenu craftingMenu) {
+                      MiniMap miniMap, CraftingMenu craftingMenu, Clock clock) {
         super("Pixel Pioneer");
         this.craftingMenu = craftingMenu;
         this.inventory = inventory;
@@ -42,6 +44,7 @@ public class GameWindow extends JFrame implements WorldUpdateHandler {
         this.hud = hud;
         this.player = world.getPlayer();
         this.miniMap = miniMap;
+        this.clock = clock;
 
         addWindowListener(new WindowAdapter() {
             @Override
@@ -188,6 +191,17 @@ public class GameWindow extends JFrame implements WorldUpdateHandler {
                 }
             }
         }
+        // 0 = day
+        // MAX_TIME / 2 = night (120)
+        // MAX_TIME = day
+        int distFromNight = Math.abs(clock.getTime() - (MAX_TIME / 2));
+        int alpha = MAX_TIME - (distFromNight * 2); // zero is brightest
+
+        Color nightColor = new Color(0, 0, 0, alpha);
+
+        g2d.setColor(nightColor);
+        g2d.fillRect(0, 0, mapWidth, mapHeight);
+
         miniMap.draw(g2d, mapWidth, mapHeight);
         hud.draw(g2d, mapWidth, mapHeight);
         inventory.draw(g2d, mapWidth, mapHeight);

@@ -219,7 +219,7 @@ public class Player extends Entity implements TickHandler {
 
     @Override
     public void onTick(int time) {
-        if (time == Const.MAX_TIME) {
+        if (time % (Const.MAX_TIME / 2) == 0) {
             hunger--;
             if (hunger < 0) {
                 hunger = 0;
