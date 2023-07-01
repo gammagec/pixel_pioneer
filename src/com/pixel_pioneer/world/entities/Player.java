@@ -1,6 +1,7 @@
 package com.pixel_pioneer.world.entities;
 
 import com.pixel_pioneer.Const;
+import com.pixel_pioneer.actions.KeyboardHandler;
 import com.pixel_pioneer.clock.Clock;
 import com.pixel_pioneer.clock.TickHandler;
 import com.pixel_pioneer.sound.SoundEngine;
@@ -19,6 +20,7 @@ public class Player extends Entity implements TickHandler {
     private int building = 0;
     private boolean flying = false;
     private final ObjectInstance[][] inventory = new ObjectInstance[Const.INVENTORY_HEIGHT][Const.INVENTORY_WIDTH];
+    private KeyboardHandler keyboardHandler;
 
     public Player(Clock clock, SoundEngine soundEngine, World world) {
         this.soundEngine = soundEngine;
@@ -27,6 +29,10 @@ public class Player extends Entity implements TickHandler {
         inventory[0][0] = new ObjectInstance(GameObjects.BASIC_SWORD.getId(), 1);
         inventory[0][1] = new ObjectInstance(GameObjects.BASIC_AXE.getId(), 1);
         inventory[0][2] = new ObjectInstance(GameObjects.BASIC_PICK_AXE.getId(), 1);
+    }
+
+    public void setKeyboardHandler(KeyboardHandler keyboardHandler) {
+        this.keyboardHandler = keyboardHandler;
     }
 
     public void reset(World world) {
@@ -44,6 +50,7 @@ public class Player extends Entity implements TickHandler {
             building = 0;
         }
         if (!isAlive()) {
+            keyboardHandler.setDeadMode();
             soundEngine.playDeadSong();
         } else {
             soundEngine.playOw();

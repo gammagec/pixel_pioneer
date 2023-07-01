@@ -29,6 +29,7 @@ public class Main {
         CraftingMenu craftingMenu = new CraftingMenu(world);
         Actions actions = new Actions(world, hud, inventory, soundEngine, aiEngine, miniMap, craftingMenu, clock);
         KeyboardHandler keyboardHandler = new KeyboardHandler(actions);
+        world.getPlayer().setKeyboardHandler(keyboardHandler);
         actions.setKeyboardHandler(keyboardHandler);
         aiEngine.setKeyboardHandler(keyboardHandler);
         soundEngine.playBackgroundMusic();
