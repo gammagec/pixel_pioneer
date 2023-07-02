@@ -219,9 +219,9 @@ public class Player extends Entity implements TickHandler {
 
     @Override
     public void onTick(int time) {
-        if (time % (Const.MAX_TIME / 2) == 0) {
+        if (time % (Const.MAX_TIME / 2) == 0 && !isFlying()) {
             hunger--;
-            if (hunger < 0) {
+            if (hunger < 0 && !isFlying()) {
                 hunger = 0;
                 health--;
                 takeDamage(1);
