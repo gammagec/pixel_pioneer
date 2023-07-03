@@ -114,8 +114,18 @@ public class Actions {
     }
 
     public void onFly() {
-        player.toggleFlying();
-        world.worldUpdated();
+        ObjectInstance obj = world.getObjectAt(player.getLocation());
+        if (obj == null){
+            player.toggleFlying();
+            world.worldUpdated();
+            return;
+        }
+        GameObject gameObject = GameObject.OBJECTS_BY_ID.get(obj.getObjectId());
+        if (!gameObject.isBlocking()) {
+            player.toggleFlying();
+            world.worldUpdated();
+        }
+
     }
 
     public void onReset() {
@@ -196,7 +206,7 @@ public class Actions {
         if (objId != null) {
             GameObject obj = GameObject.OBJECTS_BY_ID.get(objId);
             if (obj.isCanEat()) {
-                if (player.getHunger() < Const.MAX_HUNGER) {
+                if (player.getHunger() < Const.MAX_HUNGER || player.getHealth() < Const.MAX_HEALTH) {
                     player.eatObject(obj);
                     player.removeObject(obj.getId());
                 }
@@ -261,6 +271,9 @@ public class Actions {
         }
         if (player.isExhausted() && tile.isSwim() && !player.isFlying()) {
             damage += 1;
+        }
+        if (player.getThirst()< Const.MAX_THIRST && tile.isSwim() && !player.isFlying()) {
+           player.drink();
         }
         if (tile.isSwim() && !player.isExhausted() && !player.isFlying()) {
             player.takeStamina(1);

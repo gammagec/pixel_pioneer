@@ -221,12 +221,25 @@ public class Player extends Entity implements TickHandler {
     public void onTick(int time) {
         if (time % (Const.MAX_TIME / 2) == 0 && !isFlying()) {
             hunger--;
-            if (hunger < 0 && !isFlying()) {
+            if (hunger < 0) {
                 hunger = 0;
                 health--;
                 takeDamage(1);
             }
+            thirst--;
+            if (thirst < 0) {
+                thirst = 0;
+                health--;
+                takeDamage(1);
+            }
             world.playerUpdated();
+        }
+    }
+
+    public void drink() {
+        thirst++;
+        if (thirst > Const.MAX_THIRST){
+            thirst = Const.MAX_THIRST;
         }
     }
 }

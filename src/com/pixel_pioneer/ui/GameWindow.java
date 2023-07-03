@@ -199,7 +199,7 @@ public class GameWindow extends JFrame implements WorldUpdateHandler {
                         }
                     }
                     Tile tileAt = world.getTileAt(tLoc);
-                    if (tileAt.isSwim()) {
+                    if (tileAt.isSwim() && !player.isFlying()) {
                         SpriteSheets.OBJ_SPRITES.drawTile(g2d, x * tileWidth + startX, y * tileHeight + startY,
                                 tileWidth, tileHeight, tileAt.getSwimAsset()); //swim cover
                     }
