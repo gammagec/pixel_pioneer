@@ -170,6 +170,8 @@ public class GameObjects {
         setBlocking(false);
         setDamage(1);
         addAnimationFrame(ImageAssets.CAMP_FIRE_2);
+        setLight(1200);
+        setLightFlicker(100);
     }};
 
     public static GameObject FEATHER = new GameObject("feather", ImageAssets.FEATHER) {{

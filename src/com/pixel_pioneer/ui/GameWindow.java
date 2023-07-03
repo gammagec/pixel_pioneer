@@ -8,6 +8,8 @@ import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
+import java.util.ArrayList;
 
 import com.pixel_pioneer.Const;
 import com.pixel_pioneer.actions.KeyboardHandler;
@@ -116,6 +118,7 @@ public class GameWindow extends JFrame implements WorldUpdateHandler {
         int startX = centerTileX - (numX / 2 * tileWidth);
         int startY = centerTileY - (numY / 2 * tileHeight);
 
+        List<Light> lights = new ArrayList<>();
         for (int y = 0; y <= numY; y++) {
             for (int x = 0; x <= numX; x++) {
                 // Comment below is from the FIRST version!
@@ -157,6 +160,10 @@ public class GameWindow extends JFrame implements WorldUpdateHandler {
                         GameObject gObj = GameObject.OBJECTS_BY_ID.get(obj.getObjectId());
                         SpriteSheets.OBJ_SPRITES.drawTile(g2d, x * tileWidth + startX, y * tileHeight + startY,
                                 tileWidth, tileHeight, gObj.getImageAsset(obj.getUsesLeft()));
+                        int light = gObj.getLightRadius();
+                        if (light > 0) {
+                            lights.add(new Light(new PointI(x * tileWidth + startX + tileWidth / 2, y * tileHeight + startY + tileHeight / 2), light, gObj.getLightFlicker()));
+                        }
                     }
                 } else {
                     // Off the map
@@ -168,6 +175,10 @@ public class GameWindow extends JFrame implements WorldUpdateHandler {
                     Mob mob = Mob.MOBS_BY_ID.get(mobInst.getMobId());
                     SpriteSheets.OBJ_SPRITES.drawTile(g2d, x * tileWidth + startX, y * tileHeight + startY,
                             tileWidth, tileHeight, mob.getImageAsset());
+                    int light = mob.getLight();
+                    if (light > 0) {
+                        lights.add(new Light(new PointI(x * tileWidth + startX + tileWidth / 2, y * tileHeight + startY + tileHeight / 2), light, 0));
+                    }
                 }
                 if (tLoc.equals(loc)) {
                     if (player.getHealth() > 0) {
@@ -214,6 +225,14 @@ public class GameWindow extends JFrame implements WorldUpdateHandler {
         nightG2d.setColor(nightColor);
         nightG2d.fillRect(0, 0, mapWidth, mapHeight);
         fadeCircle.drawFade(nightG2d, mapWidth, mapHeight, mapWidth / 2, mapHeight / 2, 400);
+        for (Light light : lights) {
+            PointI lightLoc = light.getLocation();
+            int diameter = light.getDiameter();
+            if (clock.getTime() % 2 == 0) {
+                diameter -= light.getFlicker();
+            }
+            fadeCircle.drawFade(nightG2d, mapWidth, mapHeight, lightLoc.getX(), lightLoc.getY(), diameter);
+        }
 
         g2d.drawImage(nightOverlay, 0, 0, null);
         miniMap.draw(g2d, mapWidth, mapHeight);

@@ -44,6 +44,7 @@ public class Mobs {
     }}, 7, ImageAssets.LAVA_MONSTER, /* Drops= */ new HashMap<>()) {{
         setCanSwim(true);
         setDamage(2);
+        setLight(500);
     }};
 
     public static final Mob SEA_DRAGON = new Mob("sea dragon", new HashSet<>() {{

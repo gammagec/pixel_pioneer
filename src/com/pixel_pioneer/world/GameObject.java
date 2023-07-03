@@ -27,6 +27,9 @@ public class GameObject {
     private int useOnWalkObjectId = 0;
     private int useOnWalkConsumes = 0;
     private int useOnWalkGiveAmount = 0;
+    private int light = 0;
+
+    private int lightFlicker = 0;
 
     private final List<ImageAsset> animationFrames = new ArrayList<>();
 
@@ -36,6 +39,18 @@ public class GameObject {
         this.name = name;
         this.id = nextId++;
         OBJECTS_BY_ID.put(this.id, this);
+    }
+
+    public void setLight(int light) {
+        this.light = light;
+    }
+
+    public void setLightFlicker(int lightFlicker) {
+        this.lightFlicker = lightFlicker;
+    }
+
+    public int getLightFlicker() {
+        return lightFlicker;
     }
 
     public void addAnimationFrame(ImageAsset imageAsset) {
@@ -51,6 +66,10 @@ public class GameObject {
         useOnWalkObjectId = objectId;
         useOnWalkConsumes = consumes;
         useOnWalkGiveAmount = giveAmount;
+    }
+
+    public int getLightRadius() {
+        return light;
     }
 
     public void setAssetAtUse(int use, ImageAsset asset) {

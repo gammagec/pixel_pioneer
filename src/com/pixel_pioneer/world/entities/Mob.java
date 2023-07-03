@@ -26,6 +26,8 @@ public class Mob {
 
     public static Map<Integer, Mob> MOBS_BY_ID = new HashMap<>();
 
+    private int light = 0;
+
     public Mob(String name, Set<Integer> biomes, int visionRange, ImageAsset imageAsset, Map<ObjectInstance, Integer> drops) {
         this.name = name;
         this.biomes = biomes;
@@ -40,6 +42,14 @@ public class Mob {
                 dropsByWeight.add(drop);
             }
         }
+    }
+
+    public void setLight(int light) {
+        this.light = light;
+    }
+
+    public int getLight() {
+        return light;
     }
 
     public String getName() {
