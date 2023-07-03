@@ -8,9 +8,6 @@ import com.pixel_pioneer.sound.SoundEngine;
 import com.pixel_pioneer.ui.*;
 import com.pixel_pioneer.world.World;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
 public class Main {
 
     // Pixel Pioneer: Guy's Odyssey
@@ -20,6 +17,7 @@ public class Main {
 
     public static void main(String[] args) {
         Clock clock = new Clock();
+        FadeCircle fadeCircle = new FadeCircle();
         SoundEngine soundEngine = new SoundEngine();
         World world = new World(clock, soundEngine);
         AiEngine aiEngine = new AiEngine(world, soundEngine, clock);
@@ -34,7 +32,8 @@ public class Main {
         aiEngine.setKeyboardHandler(keyboardHandler);
         soundEngine.playBackgroundMusic();
         GameWindow gameWindow = new GameWindow(
-                world, hud, inventory, keyboardHandler, miniMap, craftingMenu, clock);
+                world, hud, inventory, keyboardHandler, miniMap, craftingMenu, clock,
+                fadeCircle);
         aiEngine.populateMobs();
         clock.start();
         gameWindow.setVisible(true);

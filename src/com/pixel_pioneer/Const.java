@@ -4,7 +4,7 @@ public class Const {
     public static final int STARTING_GROWTH_CYCLES = 10;
     public static int WORLD_SIZE = 512;
     public static int TILE_SIZE = 64;
-    public static int MAX_TIME = 240;
+    public static int MAX_TIME = 480;
 
     public static int TILE_RENDER_SIZE = 128;
 

@@ -29,14 +29,17 @@ public class GameWindow extends JFrame implements WorldUpdateHandler {
 
     private BufferedImage backBuffer = null;
 
+    private BufferedImage nightOverlay = null;
+
     final private Player player;
     final private MiniMap miniMap;
     private final Clock clock;
+    private final FadeCircle fadeCircle;
 
     final private CraftingMenu craftingMenu;
 
     public GameWindow(World world, Hud hud, Inventory inventory, KeyboardHandler keyboardHandler,
-                      MiniMap miniMap, CraftingMenu craftingMenu, Clock clock) {
+                      MiniMap miniMap, CraftingMenu craftingMenu, Clock clock, FadeCircle fadeCircle) {
         super("Pixel Pioneer");
         this.craftingMenu = craftingMenu;
         this.inventory = inventory;
@@ -45,6 +48,7 @@ public class GameWindow extends JFrame implements WorldUpdateHandler {
         this.player = world.getPlayer();
         this.miniMap = miniMap;
         this.clock = clock;
+        this.fadeCircle = fadeCircle;
 
         addWindowListener(new WindowAdapter() {
             @Override
@@ -195,13 +199,23 @@ public class GameWindow extends JFrame implements WorldUpdateHandler {
         // MAX_TIME / 2 = night (120)
         // MAX_TIME = day
         int distFromNight = Math.abs(clock.getTime() - (MAX_TIME / 2));
-        int alpha = MAX_TIME - (distFromNight * 2); // zero is brightest
+        double darkness = 1 - ((distFromNight * 2.0) / MAX_TIME);
+        // darkness = 1;
+        int alpha = (int) Math.floor(darkness * 255.0); // zero is brightest
 
         Color nightColor = new Color(0, 0, 0, alpha);
+        if (nightOverlay == null || nightOverlay.getWidth() != mapWidth || nightOverlay.getHeight() != mapHeight) {
+            nightOverlay = new BufferedImage(mapWidth, mapHeight, BufferedImage.TYPE_INT_ARGB);
+        }
+        Graphics2D nightG2d = nightOverlay.createGraphics();
+        nightG2d.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR));
+        nightG2d.fillRect(0,0,mapWidth,mapHeight);
+        nightG2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
+        nightG2d.setColor(nightColor);
+        nightG2d.fillRect(0, 0, mapWidth, mapHeight);
+        fadeCircle.drawFade(nightG2d, mapWidth, mapHeight, mapWidth / 2, mapHeight / 2, 400);
 
-        g2d.setColor(nightColor);
-        g2d.fillRect(0, 0, mapWidth, mapHeight);
-
+        g2d.drawImage(nightOverlay, 0, 0, null);
         miniMap.draw(g2d, mapWidth, mapHeight);
         hud.draw(g2d, mapWidth, mapHeight);
         inventory.draw(g2d, mapWidth, mapHeight);
