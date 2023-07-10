@@ -1,6 +1,7 @@
 package com.pixel_pioneer.actions;
 
 import com.pixel_pioneer.util.Direction;
+import com.pixel_pioneer.world.World;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -8,9 +9,11 @@ import java.awt.event.KeyEvent;
 public class KeyboardHandler extends KeyAdapter {
 
     private final Actions actions;
+    private final World world;
 
-    public KeyboardHandler(Actions actions) {
+    public KeyboardHandler(Actions actions, World world) {
         this.actions = actions;
+        this.world = world;
     }
 
     private final KeyAdapter craftingMode = new KeyAdapter() {
@@ -98,7 +101,9 @@ public class KeyboardHandler extends KeyAdapter {
     }
 
     public void keyPressed(KeyEvent e) {
+        world.setDirty();
         activeAdapter.keyPressed(e);
+        world.worldUpdated();
     }
 
     public void setCraftingMode() {

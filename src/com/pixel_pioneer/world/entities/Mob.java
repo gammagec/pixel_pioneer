@@ -155,13 +155,12 @@ public class Mob {
                 if (damage > 0) {
                     player.takeDamage(getDamage());
                     world.playerUpdated();
-                    world.worldUpdated();
                 }
             }
         }
     }
 
     public boolean canMove(World world, PointI loc) {
-        return !world.getBlocking(loc.getX(), loc.getY());
+        return world.isNonBlocking(loc.getX(), loc.getY());
     }
 }

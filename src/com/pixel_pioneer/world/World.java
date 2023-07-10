@@ -21,14 +21,15 @@ public class World {
     private final List<MobInstance> mobs = new ArrayList<>();
     private final Random random = new Random();
 
-    // private final BiomeGenerator biomeGenerator = new OriginalBiomeGenerator();
     private final BiomeGenerator biomeGenerator = new PerlinBiomeGenerator();
     private final BiomeGrower biomeGrower = new DefaultBiomeGrower();
 
-    //private PerlinNoiseGenerator perlinNoiseGenerator = new PerlinNoiseGenerator(random.nextGaussian());
     private final double[][] variantMap = new double[Const.WORLD_SIZE][Const.WORLD_SIZE];
 
     private final ObjectGrower objectGrower = new DefaultObjectGrower();
+
+    private boolean dirty = true;
+    private PointI lastPlayerLoc = new PointI(0, 0);
 
     public World(Clock clock, SoundEngine soundEngine) {
         player = new Player(clock, soundEngine, this);
@@ -45,17 +46,23 @@ public class World {
         generateMap();
         growInitialObjects();
 
-
         player.reset(this);
     }
+
+    public void setDirty() {
+        this.dirty = true;
+    }
+
     public void growInitialObjects(){
         for (int i = 0; i < Const.STARTING_GROWTH_CYCLES; i++) {
             objectGrower.growObjects(this);
         }
+        dirty = true;
     }
 
     public void addMob(MobInstance mob) {
         this.mobs.add(mob);
+        dirty = true;
     }
 
     public MobInstance getMobAt(PointI loc) {
@@ -75,6 +82,7 @@ public class World {
         if (drop != null) {
             putObject(loc, drop);
         }
+        dirty = true;
     }
 
     public Player getPlayer() {
@@ -87,10 +95,7 @@ public class World {
         for(int i = 0; i < Const.DEFAULT_GROW_BIOMES; i++) {
             growBiomes();
         }
-        /*
-        for (int i = 0; i < random.nextInt(Const.MAX_RIVER_GENS); i++) {
-            generateRiver();
-        }*/
+        dirty = true;
     }
 
     public PointI randomSpawnPoint() {
@@ -131,14 +136,12 @@ public class World {
 
     public void growBiomes() {
         biomeGrower.growBiomes(locations, new Integer[] {});
-    }
-
-    public void growBiomes(Integer[] biomes) {
-        biomeGrower.growBiomes(locations, biomes);
+        dirty = true;
     }
 
     public void removeObject(int x, int y) {
         locations[y][x].setObjectInstance(null);
+        dirty = true;
     }
 
     public void pickupObject(int x, int y) {
@@ -147,6 +150,7 @@ public class World {
             player.giveObject(obj);
             locations[y][x].setObjectInstance(null);
         }
+        dirty = true;
     }
 
     public Tile getTileAt(PointI loc) {
@@ -195,66 +199,19 @@ public class World {
                 }
             }
         }
-    }
-
-    void generateRiver() {
-        int x = random.nextInt(Const.WORLD_SIZE);
-        int y = random.nextInt(Const.WORLD_SIZE);
-        int width = random.nextInt(Const.MAX_RIVER_WIDTH);
-        int facing = random.nextInt(4);
-        while(x >= 0 && y >= 0 && x < Const.WORLD_SIZE && y < Const.WORLD_SIZE) {
-            switch (facing) {
-                case 0 -> { // east
-                    for (int i = 0; i < width; i++) {
-                        if (inBounds(new PointI(x, y + i))) {
-                            locations[y + i][x].setBiomeId(Biomes.WATER.getBiomeId());
-                        }
-                    }
-                }
-                case 1, 3 -> { // south, north
-                    for (int i = 0; i < width; i++) {
-                        if (inBounds(new PointI(x - i, y))) {
-                            locations[y][x - i].setBiomeId(Biomes.WATER.getBiomeId());
-                        }
-                    }
-                }
-                case 2 -> { // west
-                    for (int i = 0; i < width; i++) {
-                        if (inBounds(new PointI(x, y - i))) {
-                            locations[y - i][x].setBiomeId(Biomes.WATER.getBiomeId());
-                        }
-                    }
-                }
-            }
-            int rand = random.nextInt(100);
-            if (rand > 75) {
-                // forward
-                switch (facing) {
-                    case 0 -> x++;
-                    case 1 -> y++;
-                    case 2 -> x--;
-                    case 3 -> y--;
-                }
-            } else if (rand > 13) {
-                facing++;
-                if (facing > 3) facing = 0;
-            } else { // 12
-                facing--;
-                if (facing < 0) facing = 3;
-            }
-        }
+        dirty = true;
     }
 
     public boolean inBounds(PointI loc) {
         return loc.inBounds(0, 0, Const.WORLD_SIZE, Const.WORLD_SIZE);
     }
 
-    public boolean getBlocking(int x, int y) {
+    public boolean isNonBlocking(int x, int y) {
         ObjectInstance obj = locations[y][x].getObjectInstance();
         if (obj != null && GameObject.OBJECTS_BY_ID.get(obj.getObjectId()).isBlocking()) {
-            return true;
+            return false;
         }
-        return Tiles.TILES_BY_ID.get(locations[y][x].getTileId()).isBlocking();
+        return !Tiles.TILES_BY_ID.get(locations[y][x].getTileId()).isBlocking();
     }
 
     public void setWorldUpdateHandler(WorldUpdateHandler worldUpdateHandler) {
@@ -263,13 +220,19 @@ public class World {
 
     public void playerUpdated() {
         if (this.worldUpdateHandler != null) {
+            // if player dirty
             this.worldUpdateHandler.playerUpdated();
         }
     }
 
     public void worldUpdated() {
-        if(this.worldUpdateHandler != null) {
+        if (!lastPlayerLoc.equals(player.getLocation())) {
+            dirty = true;
+        }
+        if(this.worldUpdateHandler != null && dirty) {
             this.worldUpdateHandler.worldUpdated();
+            dirty = false;
+            lastPlayerLoc = player.getLocation();
         }
     }
 
@@ -278,6 +241,7 @@ public class World {
         if (existingObj == null) {
             locations[loc.getY()][loc.getX()].setObjectInstance(obj);
         }
+        dirty = true;
     }
 
     public double getVariantAt(PointI loc) {
@@ -286,5 +250,6 @@ public class World {
 
     public void removeAllMobs() {
         this.mobs.clear();
+        dirty = true;
     }
 }

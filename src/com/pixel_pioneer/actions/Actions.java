@@ -60,26 +60,22 @@ public class Actions {
         hud.update();
         inventory.update();
         craftingMenu.update();
-        world.worldUpdated();
     }
 
     public void endCraft() {
         craftingMenu.setOpen(false);
         clock.setPaused(false);
         keyboardHandler.setWorldMode();
-        world.worldUpdated();
     }
 
     public void craftSelectionDown() {
         craftingMenu.selectionDown();
         craftingMenu.update();
-        world.worldUpdated();
     }
 
     public void craftSelectionUp() {
         craftingMenu.selectionUp();
         craftingMenu.update();
-        world.worldUpdated();
     }
 
     public void onCraft() {
@@ -87,7 +83,6 @@ public class Actions {
         keyboardHandler.setCraftingMode();
         clock.setPaused(true);
         craftingMenu.update();
-        world.worldUpdated();
     }
 
     public void onGenerateBiomes() {
@@ -95,7 +90,6 @@ public class Actions {
             world.generateBiomes();
             world.generateMap();
             world.growInitialObjects();
-            world.worldUpdated();
             // Reset mobs
             aiEngine.populateMobs();
         }
@@ -107,7 +101,6 @@ public class Actions {
             world.generateMap();
             world.growInitialObjects();
             miniMap.update();
-            world.worldUpdated();
             // Reset mobs
             aiEngine.populateMobs();
         }
@@ -117,13 +110,11 @@ public class Actions {
         ObjectInstance obj = world.getObjectAt(player.getLocation());
         if (obj == null){
             player.toggleFlying();
-            world.worldUpdated();
             return;
         }
         GameObject gameObject = GameObject.OBJECTS_BY_ID.get(obj.getObjectId());
         if (!gameObject.isBlocking()) {
             player.toggleFlying();
-            world.worldUpdated();
         }
 
     }
@@ -131,14 +122,12 @@ public class Actions {
     public void onReset() {
         player.reset(world);
         hud.update();
-        world.worldUpdated();
         soundEngine.playNextSong();
     }
     public void onDeadReset() {
         player.reset(world);
         keyboardHandler.setWorldMode();
         hud.update();
-        world.worldUpdated();
         soundEngine.playNextSong();
     }
 
@@ -159,7 +148,6 @@ public class Actions {
         keyboardHandler.setWorldMode();
         hud.update();
         inventory.update();
-        world.worldUpdated();
     }
 
     private void useLoc(PointI loc, GameObject obj) {
@@ -216,7 +204,6 @@ public class Actions {
                 keyboardHandler.setUseMode();
             }
             hud.update();
-            world.worldUpdated();
         }
     }
 
@@ -257,7 +244,6 @@ public class Actions {
         }
         player.setBuildingIndex(0);
         hud.update();
-        world.worldUpdated();
     }
 
     void afterMove() {
@@ -320,7 +306,6 @@ public class Actions {
         if (needsInventoryUpdate) {
             inventory.update();
         }
-        world.worldUpdated();
     }
 
     boolean canMoveHere(PointI loc) {
@@ -336,7 +321,7 @@ public class Actions {
         if (loc.getY() > Const.WORLD_SIZE) {
             return false;
         }
-        return !this.world.getBlocking(loc.getX(), loc.getY()) || player.isFlying();
+        return this.world.isNonBlocking(loc.getX(), loc.getY()) || player.isFlying();
     }
 
     public void inventory() {
@@ -344,50 +329,42 @@ public class Actions {
         inventory.toggleOpen();
         keyboardHandler.setInventoryMode();
         clock.setPaused(true);
-        world.worldUpdated();
     }
 
     public void invUp() {
         inventory.moveSelection(0, -1);
         inventory.update();
-        world.worldUpdated();
     }
 
     public void invDown() {
         inventory.moveSelection(0, 1);
         inventory.update();
-        world.worldUpdated();
     }
 
     public void invLeft() {
         inventory.moveSelection(-1, 0);
         inventory.update();
-        world.worldUpdated();
     }
 
     public void invRight() {
         inventory.moveSelection(1, 0);
         inventory.update();
-        world.worldUpdated();
     }
 
     public void invSpace() {
         inventory.selectObject();
         inventory.update();
         hud.update();
-        world.worldUpdated();
     }
 
     public void endInventory() {
         keyboardHandler.setWorldMode();
         inventory.toggleOpen();
         clock.setPaused(false);
-        world.worldUpdated();
     }
 
     public void endUse() {
         keyboardHandler.setWorldMode();
         hud.update();
-        world.worldUpdated();
     }
 }

@@ -50,6 +50,7 @@ public class AiEngine implements TickHandler {
                 world.addMob(mobInst);
             }
         }
+        world.setDirty();
     }
 
     @Override
@@ -58,6 +59,7 @@ public class AiEngine implements TickHandler {
             Mob mob = Mob.MOBS_BY_ID.get(mobInst.getMobId());
             mob.update(world, mobInst, soundEngine, keyboardHandler);
         }
+        world.setDirty();
         world.worldUpdated();
     }
 }

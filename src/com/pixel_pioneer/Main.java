@@ -26,7 +26,7 @@ public class Main {
         MiniMap miniMap = new MiniMap(world);
         CraftingMenu craftingMenu = new CraftingMenu(world);
         Actions actions = new Actions(world, hud, inventory, soundEngine, aiEngine, miniMap, craftingMenu, clock);
-        KeyboardHandler keyboardHandler = new KeyboardHandler(actions);
+        KeyboardHandler keyboardHandler = new KeyboardHandler(actions, world);
         world.getPlayer().setKeyboardHandler(keyboardHandler);
         actions.setKeyboardHandler(keyboardHandler);
         aiEngine.setKeyboardHandler(keyboardHandler);
