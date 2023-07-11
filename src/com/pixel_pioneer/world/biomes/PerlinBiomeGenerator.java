@@ -32,9 +32,9 @@ public class PerlinBiomeGenerator implements BiomeGenerator {
                 int height = (int) Math.floor((((noise + 1) / 2) * 7));
                 switch (height) {
                     case 0, 1, 2 -> locations[y][x].setBiomeId(Biomes.WATER.getBiomeId());
-                    case 3, 4, 5, 6 -> locations[y][x].setBiomeId(Biomes.PLAINS.getBiomeId());
-                    // case 5 -> locations[y][x].setBiomeId(Biomes.MOUNTAIN.getBiomeId());
-                    // case 6 -> locations[y][x].setBiomeId(Biomes.SNOW.getBiomeId());
+                    case 3, 4 -> locations[y][x].setBiomeId(Biomes.PLAINS.getBiomeId());
+                    case 5 -> locations[y][x].setBiomeId(Biomes.MOUNTAIN.getBiomeId());
+                    case 6 -> locations[y][x].setBiomeId(Biomes.SNOW.getBiomeId());
                 }
             }
         }
@@ -42,7 +42,7 @@ public class PerlinBiomeGenerator implements BiomeGenerator {
         generator.setSeed(random.nextGaussian() * 255);
 
         // Overlay Forests
-        /*for (int y = 0; y < Const.WORLD_SIZE; y++) {
+        for (int y = 0; y < Const.WORLD_SIZE; y++) {
             for (int x = 0; x < Const.WORLD_SIZE; x++) {
                 double noise = generator.noise(x, y, 32);
                 int opt = (int) Math.floor((((noise + 1) / 2) * 5));
@@ -78,7 +78,7 @@ public class PerlinBiomeGenerator implements BiomeGenerator {
                     }
                 }
             }
-        }*/
+        }
 
 //        generator.setSeed(random.nextGaussian() * 255);
 //        // Overlay Snow
