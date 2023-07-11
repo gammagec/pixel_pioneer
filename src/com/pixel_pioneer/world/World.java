@@ -94,29 +94,35 @@ public class World {
     }
 
     public PointI randomSpawnPoint() {
-        return randomSpawnPoint(
+        List<PointI> valid = getValidSpawnPoints(
                 Arrays.stream(Biomes.ALL_BIOMES).map(Biome::getBiomeId).collect(Collectors.toSet()), false);
+        return valid.get(random.nextInt(valid.size()));
     }
 
-    public PointI randomSpawnPoint(Set<Integer> biomes, boolean includeSwim) {
-        while(true) {
-            PointI loc = new PointI(random.nextInt(Const.WORLD_SIZE), random.nextInt(Const.WORLD_SIZE));
-            Tile tile = getTileAt(loc);
-            ObjectInstance obj = getObjectAt(loc);
-            boolean objBlocking = false;
-            if (obj != null) {
-                GameObject gObj = GameObject.OBJECTS_BY_ID.get(obj.getObjectId());
-                objBlocking = gObj.isBlocking();
-            }
-            Integer biome = getBiomeAt(loc).getBiomeId();
-            if ((includeSwim || !tile.isSwim()) &&
-                    !tile.isBlocking() &&
-                    tile.getDamage() == 0 &&
-                    !objBlocking &&
-                    biomes.contains(biome)) {
-                return loc;
+    public List<PointI> getValidSpawnPoints(Set<Integer> biomes, boolean includeSwim) {
+        System.out.println("Finding a random spawn point");
+        List<PointI> validSpawnPoints = new ArrayList<>();
+        for (int y = 0; y < Const.WORLD_SIZE; y++) {
+            for (int x = 0; x < Const.WORLD_SIZE; x++) {
+                PointI loc = new PointI(x, y);
+                Tile tile = getTileAt(loc);
+                ObjectInstance obj = getObjectAt(loc);
+                boolean objBlocking = false;
+                if (obj != null) {
+                    GameObject gObj = GameObject.OBJECTS_BY_ID.get(obj.getObjectId());
+                    objBlocking = gObj.isBlocking();
+                }
+                Integer biome = getBiomeAt(loc).getBiomeId();
+                if ((includeSwim || !tile.isSwim()) &&
+                        !tile.isBlocking() &&
+                        tile.getDamage() == 0 &&
+                        !objBlocking &&
+                        biomes.contains(biome)) {
+                    validSpawnPoints.add(loc);
+                }
             }
         }
+        return validSpawnPoints;
     }
 
     public List<MobInstance> getMobs() {

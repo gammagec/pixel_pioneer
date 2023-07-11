@@ -4,10 +4,16 @@ import com.pixel_pioneer.clock.Clock;
 import com.pixel_pioneer.clock.TickHandler;
 import com.pixel_pioneer.actions.KeyboardHandler;
 import com.pixel_pioneer.sound.SoundEngine;
+import com.pixel_pioneer.util.PointI;
 import com.pixel_pioneer.world.World;
 import com.pixel_pioneer.world.entities.Mob;
 import com.pixel_pioneer.world.entities.MobInstance;
 import com.pixel_pioneer.world.entities.Mobs;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 
 public class AiEngine implements TickHandler {
@@ -30,10 +36,19 @@ public class AiEngine implements TickHandler {
     public void populateMobs() {
         Mobs.initialize();
         world.removeAllMobs();
+        Map<Integer, List<PointI>> mobValidPoints = new HashMap<>();
         for (int i = 0; i < 2000; i++) {
             Mob mob = Mob.getRandomMob();
-            MobInstance mobInst = new MobInstance(mob.getId(), world.randomSpawnPoint(mob.getBiomes(), mob.isCanSwim()));
-            world.addMob(mobInst);
+            List<PointI> points = mobValidPoints.get(mob.getId());
+            if (points == null) {
+                points = world.getValidSpawnPoints(mob.getBiomes(), mob.isCanSwim());
+                mobValidPoints.put(mob.getId(), points);
+            }
+            if (points.size() > 0) {
+                PointI spawn = points.get(new Random().nextInt(points.size()));
+                MobInstance mobInst = new MobInstance(mob.getId(), spawn);
+                world.addMob(mobInst);
+            }
         }
     }
 

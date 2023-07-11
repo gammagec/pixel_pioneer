@@ -60,6 +60,12 @@ public class Biomes {
         put(GameObjects.NO_OBJECT, 1869);
     }}, new Color(128, 255, 255));
 
+    public static Biome LAVA = new Biome("lava biome", new HashMap<>() {{
+        put(Tiles.LAVA, 1);
+    }}, new HashMap<>() {{
+        put(GameObjects.NO_OBJECT, 1);
+    }}, Color.ORANGE);
+
     public static Biome[] ALL_BIOMES = new Biome[] {
         WATER,
         PLAINS,
@@ -67,7 +73,8 @@ public class Biomes {
         MOUNTAIN,
         DESERT,
         SNOW,
-        ICE
+        ICE,
+        LAVA
     };
 
     public static Map<Integer, Biome> BIOMES_BY_ID = new HashMap<>() {{
