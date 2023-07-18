@@ -6,6 +6,8 @@ import com.pixel_pioneer.world.LocationInfo;
 import com.pixel_pioneer.world.World;
 
 import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class PerlinBiomeGenerator implements BiomeGenerator {
 
@@ -26,78 +28,85 @@ public class PerlinBiomeGenerator implements BiomeGenerator {
     @Override
     public void generateBiomes(LocationInfo[][] locations, World world) {
 
-        for (int y = 0; y < Const.WORLD_SIZE; y++) {
-            for (int x = 0; x < Const.WORLD_SIZE; x++) {
-                double noise = generator.noise(x, y, 32);
-                int height = (int) Math.floor((((noise + 1) / 2) * 7));
-                switch (height) {
-                    case 0, 1, 2 -> locations[y][x].setBiomeId(Biomes.WATER.getBiomeId());
-                    case 3, 4 -> locations[y][x].setBiomeId(Biomes.PLAINS.getBiomeId());
-                    case 5 -> locations[y][x].setBiomeId(Biomes.MOUNTAIN.getBiomeId());
-                    case 6 -> locations[y][x].setBiomeId(Biomes.SNOW.getBiomeId());
-                }
+        iterateMap((PointI pt) -> {
+            int x = pt.getX();
+            int y = pt.getY();
+            double noise = generator.noise(x, y, 32);
+            int height = (int) Math.floor((((noise + 1) / 2) * 7));
+            switch (height) {
+                case 0, 1, 2 -> locations[y][x].setBiomeId(Biomes.WATER.getBiomeId());
+                case 3, 4 -> locations[y][x].setBiomeId(Biomes.PLAINS.getBiomeId());
+                case 5 -> locations[y][x].setBiomeId(Biomes.MOUNTAIN.getBiomeId());
+                case 6 -> locations[y][x].setBiomeId(Biomes.SNOW.getBiomeId());
             }
-        }
+        });
 
         generator.setSeed(random.nextGaussian() * 255);
 
         // Overlay Forests
-        for (int y = 0; y < Const.WORLD_SIZE; y++) {
-            for (int x = 0; x < Const.WORLD_SIZE; x++) {
-                double noise = generator.noise(x, y, 32);
-                int opt = (int) Math.floor((((noise + 1) / 2) * 5));
-                if (locations[y][x].getBiomeId() == Biomes.PLAINS.getBiomeId()) {
-                    switch (opt) {
-                        case 0, 1, 2 -> locations[y][x].setBiomeId(Biomes.PLAINS.getBiomeId());
-                        case 3, 4 -> locations[y][x].setBiomeId(Biomes.FOREST.getBiomeId());
-                    }
+        iterateMap((PointI pt) -> {
+            int x = pt.getX();
+            int y = pt.getY();
+            double noise = generator.noise(x, y, 32);
+            int opt = (int) Math.floor((((noise + 1) / 2) * 5));
+            if (locations[y][x].getBiomeId() == Biomes.PLAINS.getBiomeId()) {
+                switch (opt) {
+                    case 0, 1, 2 -> locations[y][x].setBiomeId(Biomes.PLAINS.getBiomeId());
+                    case 3, 4 -> locations[y][x].setBiomeId(Biomes.FOREST.getBiomeId());
                 }
             }
-        }
+        });
 
         generator.setSeed(random.nextGaussian() * 255);
-
         PointI center = new PointI(Const.WORLD_SIZE / 2, Const.WORLD_SIZE / 2);
         // Overlay snow & deserts
-        for (int y = 0; y < Const.WORLD_SIZE; y++) {
-            for (int x = 0; x < Const.WORLD_SIZE; x++) {
-                double noise = generator.noise(x, y, 32);
-                int opt = (int) Math.floor((((noise + 1) / 2) * 6));
-                double distanceFromCenter = Math.sqrt(Math.pow(x - center.getX(), 2) + Math.pow(y - center.getY(), 2));
-                double distanceRatio = distanceFromCenter / Const.WORLD_SIZE;
-                if (locations[y][x].getBiomeId() == Biomes.PLAINS.getBiomeId()) {
-                    if (opt * distanceRatio > 1.3) {
-                        locations[y][x].setBiomeId(Biomes.SNOW.getBiomeId());
-                    } else if (opt * distanceRatio < 0.2) {
-                        locations[y][x].setBiomeId(Biomes.DESERT.getBiomeId());
-                    }
-                }
-                if (locations[y][x].getBiomeId() == Biomes.WATER.getBiomeId()) {
-                    if (opt * distanceRatio > 1.3) {
-                        locations[y][x].setBiomeId(Biomes.ICE.getBiomeId());
-                    }
+        iterateMap((PointI pt) -> {
+            int x = pt.getX();
+            int y = pt.getY();
+            double noise = generator.noise(x, y, 32);
+            int opt = (int) Math.floor((((noise + 1) / 2) * 6));
+            double distanceFromCenter = Math.sqrt(Math.pow(x - center.getX(), 2) + Math.pow(y - center.getY(), 2));
+            double distanceRatio = distanceFromCenter / Const.WORLD_SIZE;
+            if (locations[y][x].getBiomeId() == Biomes.PLAINS.getBiomeId()) {
+                if (opt * distanceRatio > 1.3) {
+                    locations[y][x].setBiomeId(Biomes.SNOW.getBiomeId());
+                } else if (opt * distanceRatio < 0.2) {
+                    locations[y][x].setBiomeId(Biomes.DESERT.getBiomeId());
                 }
             }
-        }
+            if (locations[y][x].getBiomeId() == Biomes.WATER.getBiomeId()) {
+                if (opt * distanceRatio > 1.3) {
+                    locations[y][x].setBiomeId(Biomes.ICE.getBiomeId());
+                }
+            }
+        });
 
-//        generator.setSeed(random.nextGaussian() * 255);
-//        // Overlay Snow
-//        for (int y = 0; y < Const.WORLD_SIZE; y++) {
-//            for (int x = 0; x < Const.WORLD_SIZE; x++) {
-//                double noise = generator.noise(x, y, 32);
-//                int height = (int) Math.floor((((noise + 1) / 2) * 255));
-//                if (height >= SNOW_THRESHOLD && biomes[y][x] == Biomes.PLAINS.getBiomeId()) {
-//                    biomes[y][x] = Biomes.SNOW.getBiomeId();
-//                }
-//            }
-//        }
+        // Do rivers
+        generator.setSeed(random.nextGaussian() * 255);
+        iterateMap((PointI pt) -> {
+            int x = pt.getX();
+            int y = pt.getY();
+            double noise = generator.noise(x, y, 32);
+            int opt = (int) Math.floor((((noise + 1) / 2) * 15));
+            int biomeId = locations[y][x].getBiomeId();
+            if (opt == 6 || opt == 7) {
+                if (biomeId == Biomes.PLAINS.getBiomeId() || biomeId == Biomes.FOREST.getBiomeId()
+                        || biomeId == Biomes.MOUNTAIN.getBiomeId()) {
+                    locations[y][x].setBiomeId(Biomes.WATER.getBiomeId());
+                }
+                if (biomeId == Biomes.SNOW.getBiomeId()) {
+                    locations[y][x].setBiomeId(Biomes.ICE.getBiomeId());
+                }
+            }
+        });
+    }
 
-//        // Make volcanoes
-//        int numVolcanos = 1 + random.nextInt(5);
-//
-//        for (int i = 0; i < numVolcanos; i++) {
-//            makeVolcano(biomes);
-//        }
+    void iterateMap(Consumer<PointI> func) {
+       for (int y = 0; y < Const.WORLD_SIZE; y++) {
+           for (int x = 0; x < Const.WORLD_SIZE; x++) {
+               func.accept(new PointI(x, y));
+           }
+       }
     }
 
     Integer biomeAt(int[][] biomes, int x, int y) {
