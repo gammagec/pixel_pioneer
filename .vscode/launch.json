@@ -1,0 +1,12 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Run Pixel Pioneer",
+      "request": "launch",
+      "mainClass": "com.pixel_pioneer.Main",
+      "cwd": "${workspaceFolder}"
+    }
+  ]
+}
