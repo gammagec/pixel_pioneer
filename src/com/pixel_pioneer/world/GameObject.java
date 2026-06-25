@@ -16,6 +16,7 @@ public class GameObject {
     private boolean canEat = false;
     private boolean canUse = false;
     private boolean canBuild = false;
+    private boolean blockedByWater = false;
 
     private int uses = 0;
 
@@ -82,6 +83,14 @@ public class GameObject {
 
     public boolean isCanBuild() {
         return canBuild;
+    }
+
+    public void setBlockedByWater(boolean blockedByWater) {
+        this.blockedByWater = blockedByWater;
+    }
+
+    public boolean isBlockedByWater() {
+        return blockedByWater;
     }
 
     public void addUseEffect(UseEffect useEffect) {

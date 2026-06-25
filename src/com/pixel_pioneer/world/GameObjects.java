@@ -166,6 +166,7 @@ public class GameObjects {
 
     public static GameObject CAMPFIRE = new GameObject("campfire", ImageAssets.CAMP_FIRE) {{
         setCanBuild(true);
+        setBlockedByWater(true);
         setCanUse(true);
         setBlocking(false);
         setDamage(1);

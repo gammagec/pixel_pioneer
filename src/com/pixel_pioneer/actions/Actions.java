@@ -179,6 +179,7 @@ public class Actions {
                 }
             }
         } else if (obj.isCanBuild()){
+            if (obj.isBlockedByWater() && world.getTileAt(loc).isSwim()) return;
             world.putObject(loc, new ObjectInstance(obj.getId(), obj.getUses()));
             player.removeObject(obj.getId());
         } else {
